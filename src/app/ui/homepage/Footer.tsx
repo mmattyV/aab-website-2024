@@ -7,16 +7,16 @@ export const Footer: React.FC<FooterProps> = ({ year, logo, icon }) => (
     <Image
       src={logo}
       alt="AAB Logo"
-      width={178} // Explicit width for optimization
-      height={103} // Aspect ratio based on provided dimensions
-      className="object-contain aspect-[1.73]"
+      width={223}
+      height={129}
+      className="object-contain"
     />
     <Image
       src={icon}
       alt=""
-      width={35} // Explicit width for optimization
-      height={22} // Aspect ratio based on provided dimensions
-      className="object-contain mt-6 rounded-none aspect-[1.55]"
+      width={37} // Explicit width for optimization
+      height={27} // Aspect ratio based on provided dimensions
+      className="object-contain mt-6"
     />
     <div className="self-stretch mt-6">
       {year} © AAB | ALL RIGHTS RESERVED

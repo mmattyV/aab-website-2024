@@ -8,6 +8,6 @@ export const Header: React.FC = () => (
       <div className="flex-1 shrink text-5xl font-bold px-5 max-md:text-4xl">AAB</div> {/* Added font-bold */}
       <HeaderSection />
     </div>
-    <MenuButton text="MENU" icon="https://cdn.builder.io/api/v1/image/assets/TEMP/6f80b1c2787d9b72c7362f62ce2f7cb553d642fe03a3fd61bfb9b908ad4a6984?placeholderIfAbsent=true&apiKey=022aeb8394de414c8f72066698fabbbc" />
+    <MenuButton text="MENU" icon="/hamburger-menu.svg" />
   </div>
 );
