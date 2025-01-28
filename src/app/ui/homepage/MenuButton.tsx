@@ -18,7 +18,7 @@ export const MenuButton: React.FC<MenuButtonProps> = ({ text, icon }) => {
       {/* Menu Button */}
       <button
         onClick={toggleMenu}
-        className="flex gap-3 items-center px-5 py-4 mx-10 bg-white min-h-[55px] rounded-[40px] w-[139px] max-md:px-4 max-md:w-auto max-md:mx-4"
+        className="flex gap-3 items-center px-5 py-4 mx-10 shadow bg-white min-h-[55px] rounded-[40px] w-[139px] max-md:px-4 max-md:w-auto max-md:mx-4"
       >
         <div className="flex items-center justify-center flex-shrink-0 w-[24px] h-[24px]">
           <Image
@@ -51,14 +51,14 @@ export const MenuButton: React.FC<MenuButtonProps> = ({ text, icon }) => {
           <Link href="/" className="text-lg hover:underline" onClick={toggleMenu}>
             Home
           </Link>
-          <Link href="/about" className="text-lg hover:underline" onClick={toggleMenu}>
-            About
+          <Link href="/brothers" className="text-lg hover:underline" onClick={toggleMenu}>
+            Brothers
           </Link>
-          <Link href="/services" className="text-lg hover:underline" onClick={toggleMenu}>
-            Services
+          <Link href="/" className="text-lg hover:underline" onClick={toggleMenu}>
+            Recruits
           </Link>
-          <Link href="/contact" className="text-lg hover:underline" onClick={toggleMenu}>
-            Contact
+          <Link href="/" className="text-lg hover:underline" onClick={toggleMenu}>
+            Login
           </Link>
         </nav>
       </div>

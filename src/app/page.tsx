@@ -2,7 +2,6 @@ import * as React from "react";
 import { Hero } from "@/app/ui/homepage/Hero";
 import { Mission } from "@/app/ui/homepage/Mission";
 import { Pillar } from "@/app/ui/homepage/Pillar";
-import { Footer } from "@/app/ui/homepage/Footer";
 
 const pillarsData = [
   {
@@ -41,12 +40,6 @@ export default function Page() {
           />
         ))}
       </div>
-
-      <Footer 
-        year={2025}
-        logo="/aablogowhite.png"
-        icon="/email-icon.svg"
-      />
     </div>
   );
 }

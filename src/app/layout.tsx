@@ -1,6 +1,7 @@
 import '@/app/ui/globals.css';
 import { questrial } from '@/app/ui/fonts';
 import { Header } from '@/app/ui/homepage/Header';
+import { Footer } from './ui/homepage/Footer';
 
 export default function RootLayout({
   children,
@@ -10,10 +11,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${questrial.className} antialiased`}>
-        {/* Add the Header (menu bar) here */}
-        <Header/>
-        {/* Render the page-specific content */}
-        {children}
+        {/* Header */}
+        <Header />
+
+        {/* Page Content */}
+        <main className="flex flex-col flex-grow">{children}</main>
+
+        {/* Footer */}
+        <footer className="flex flex-col items-center justify-center w-full mt-5 mb-10">
+          <Footer year={new Date().getFullYear()} logo="/aablogowhite.png" icon="/email-icon.svg" />
+        </footer>
       </body>
     </html>
   );

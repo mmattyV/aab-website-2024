@@ -34,3 +34,13 @@ export interface PillarProps {
   export interface MissionProps {
     text: string;
   }
+
+  export interface BrotherCardProps {
+    name: string;
+    house: string;
+  }
+  
+  export interface YearSectionProps {
+    year: string;
+    brothers: BrotherCardProps[];
+  }
