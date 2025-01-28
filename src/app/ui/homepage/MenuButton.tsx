@@ -1,26 +1,67 @@
+'use client';
+
 import * as React from "react";
+import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link"; // Import the Link component
 import { MenuButtonProps } from "@/app/lib/types";
 
-export const MenuButton: React.FC<MenuButtonProps> = ({ text, icon, onClick }) => (
-  <button
-    onClick={onClick}
-    className="flex gap-4 items-center px-6 py-4 mx-10 bg-white min-h-[55px] rounded-[40px] w-[139px] max-md:px-4 max-md:w-auto max-md:mx-4"
-  >
-    {/* Icon Container */}
-    <div className="flex items-center justify-center flex-shrink-0 w-[24px] h-[24px]">
-      <Image
-        src={icon}
-        alt={text || "menu icon"}
-        width={21}
-        height={21}
-        className="object-contain"
-      />
-    </div>
+export const MenuButton: React.FC<MenuButtonProps> = ({ text, icon }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-    {/* Text Container */}
-    <div className="flex-1 text-xl whitespace-nowrap text-zinc-700 max-sm:hidden">
-      {text}
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <div>
+      {/* Menu Button */}
+      <button
+        onClick={toggleMenu}
+        className="flex gap-3 items-center px-5 py-4 mx-10 bg-white min-h-[55px] rounded-[40px] w-[139px] max-md:px-4 max-md:w-auto max-md:mx-4"
+      >
+        <div className="flex items-center justify-center flex-shrink-0 w-[24px] h-[24px]">
+          <Image
+            src={icon}
+            alt={text || "menu icon"}
+            width={21}
+            height={21}
+            className="object-contain"
+          />
+        </div>
+        <div className="flex-1 text-xl whitespace-nowrap text-zinc-700 max-sm:hidden">
+          {text}
+        </div>
+      </button>
+
+      {/* Side Navigation Bar */}
+      <div
+        className={`fixed top-0 right-0 h-full w-[250px] bg-neutral-900 text-white transform ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        } transition-transform duration-300 ease-in-out z-50 shadow-lg`}
+      >
+        <button
+          onClick={toggleMenu}
+          className="absolute top-5 right-5 text-xl font-bold"
+        >
+          ✕
+        </button>
+        <nav className="flex flex-col mt-16 gap-4 px-6">
+          {/* Homepage Link */}
+          <Link href="/" className="text-lg hover:underline" onClick={toggleMenu}>
+            Home
+          </Link>
+          <Link href="/about" className="text-lg hover:underline" onClick={toggleMenu}>
+            About
+          </Link>
+          <Link href="/services" className="text-lg hover:underline" onClick={toggleMenu}>
+            Services
+          </Link>
+          <Link href="/contact" className="text-lg hover:underline" onClick={toggleMenu}>
+            Contact
+          </Link>
+        </nav>
+      </div>
     </div>
-  </button>
-);
+  );
+};

@@ -7,7 +7,7 @@ export const Mission: React.FC<MissionProps> = ({ text }) => (
     <div className="grow shrink gap-2.5 self-stretch py-2.5 text-4xl text-white min-w-[240px] w-[659px] max-md:px-5 max-md:max-w-full">
       {text}
     </div>
-    <ActionButton text="CONSTITUTION" icon="/right-arrow.svg" />
-    <ActionButton text="BROTHERS" icon="/right-arrow.svg" />
+    <ActionButton text="CONSTITUTION" icon="/right-arrow.svg" link="https://docs.google.com/document/d/1RrwiBT8oUrLCPNXDFlX51LTOPfC8JixzQlR3BSfmUos/edit?usp=sharing" />
+    <ActionButton text="BROTHERS" icon="/right-arrow.svg" link="/brothers" />
   </div>
 );
