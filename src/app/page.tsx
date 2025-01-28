@@ -37,7 +37,7 @@ export default function Page() {
           <Pillar
             key={index}
             {...pillar}
-            additionalClasses={index === 0 ? "mt-10" : "mt-52"} // Adjust first vs. other Pillars
+            additionalClasses={index === 0 ? "mt-10" : "mt-52 max-lg:mt-32 max-md:mt-20"} // Adjust first vs. other Pillars
           />
         ))}
       </div>

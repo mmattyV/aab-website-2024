@@ -3,7 +3,7 @@ import { HeroProps } from "@/app/lib/types";
 
 export const Hero: React.FC<HeroProps> = ({ backgroundImage }) => (
   <div
-    className="relative w-full text-9xl text-center text-white bg-center bg-no-repeat bg-cover bg-zinc-300 min-h-[857px] max-md:px-5 max-md:max-w-full max-md:text-8xl max-sm:text-6xl"
+    className="relative w-full text-center text-white bg-center bg-no-repeat bg-cover bg-zinc-300 min-h-[857px] max-md:px-5 max-md:max-w-full"
     style={{ backgroundImage: `url(${backgroundImage})` }}
   >
     {/* Overlay for adjusting opacity */}
@@ -16,7 +16,7 @@ export const Hero: React.FC<HeroProps> = ({ backgroundImage }) => (
 
     {/* Text at the bottom */}
     <div
-      className="absolute bottom-0 w-full leading-none"
+      className="absolute bottom-0 w-full px-4 leading-none overflow-hidden text-9xl max-md:text-6xl max-sm:text-5xl break-words"
       style={{
         lineHeight: "1",
         marginBottom: "-0.2em", // Ensures alignment with the bottom
