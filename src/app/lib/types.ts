@@ -38,9 +38,21 @@ export interface PillarProps {
   export interface BrotherCardProps {
     name: string;
     house: string;
+    profileImage: string;
+  }
+
+  export interface RecruitCardProps {
+    name: string;
+    house: string;
+    profileImage: string;
   }
   
-  export interface YearSectionProps {
+  export interface BrotherYearSectionProps {
     year: string;
     brothers: BrotherCardProps[];
+  }
+
+  export interface RecruitYearSectionProps {
+    year: string;
+    recruits: RecruitCardProps[];
   }

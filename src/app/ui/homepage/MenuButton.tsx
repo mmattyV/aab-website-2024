@@ -54,7 +54,7 @@ export const MenuButton: React.FC<MenuButtonProps> = ({ text, icon }) => {
           <Link href="/brothers" className="text-lg hover:underline" onClick={toggleMenu}>
             Brothers
           </Link>
-          <Link href="/" className="text-lg hover:underline" onClick={toggleMenu}>
+          <Link href="/recruits" className="text-lg hover:underline" onClick={toggleMenu}>
             Recruits
           </Link>
           <Link href="/" className="text-lg hover:underline" onClick={toggleMenu}>
