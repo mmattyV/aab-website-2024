@@ -1,6 +1,6 @@
 import * as React from "react";
 import { MenuButton } from "./MenuButton";
-import { HeaderSection } from "@/app/ui/homepage/HeaderSection";
+import { HeaderSection } from "@/app/ui/components/HeaderSection";
 import Link from "next/link";
 
 export const Header: React.FC = () => (

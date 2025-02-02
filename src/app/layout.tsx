@@ -1,7 +1,7 @@
 import '@/app/ui/globals.css';
 import { questrial } from '@/app/ui/fonts';
-import { Header } from '@/app/ui/homepage/Header';
-import { Footer } from './ui/homepage/Footer';
+import { Header } from '@/app/ui/components/Header';
+import { Footer } from './ui/components/Footer';
 
 export default function RootLayout({
   children,
