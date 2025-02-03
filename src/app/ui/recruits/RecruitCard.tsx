@@ -1,5 +1,5 @@
 import * as React from "react";
-import { RecruitCardProps } from "@/app/lib/types";
+import { RecruitCardProps } from "@/app/lib/definitions";
 
 export const RecruitCard: React.FC<RecruitCardProps> = ({ name, house, profileImage }) => {
   return (

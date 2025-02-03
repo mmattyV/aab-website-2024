@@ -16,6 +16,17 @@ export type Brother = {
     position: string;
     bio: string;
     instagram: string;
+    image_url: string;
+};
+
+export type BrotherOverviewField = {
+    id: string;
+    first_name: string;
+    last_name: string;
+    house: string;
+    position: string;
+    year: number;
+    image_url: string;
 };
 
 export type Recruit = {
@@ -26,11 +37,75 @@ export type Recruit = {
     phone: string;
     year: number;
     room: string;
-}
+    image_url: string;
+};
 
 export type RecruitComments = {
     id: string;
     recruit_id: string;
     brother_id: string;
     comment: string;
+    red_flag: string;
+};
+
+export interface PillarProps {
+    title: string;
+    description: string;
+    backgroundImage: string;
+}
+
+export interface MenuButtonProps {
+    text: string;
+    icon: string;
+    onClick?: () => void;
+}
+
+export interface ActionButtonProps {
+    text: string;
+    icon: string;
+    onClick?: () => void;
+}
+
+export interface FooterProps {
+    year: number;
+    logo: string;
+    icon: string;
+}
+
+export interface HeaderProps {
+    logo: string;
+    menuIcon: string;
+}
+
+export interface HeroProps {
+    backgroundImage: string;
+}
+
+export interface MissionProps {
+    text: string;
+}
+
+export interface BrotherCardProps {
+    id: string;
+    first_name: string;
+    last_name: string;
+    house: string;
+    position: string;
+    image_url: string;
+}
+
+export interface RecruitCardProps {
+    name: string;
+    house: string;
+    profileImage: string;
+}
+
+export interface BrotherYearSectionProps {
+    year: string;
+    brothers: BrotherCardProps[];
+}
+
+export interface RecruitYearSectionProps {
+    year: string;
+    recruits: RecruitCardProps[];
 }

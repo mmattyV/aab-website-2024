@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PillarProps } from "@/app/lib/types";
+import { PillarProps } from "@/app/lib/definitions";
 
 export const Pillar: React.FC<PillarProps & { additionalClasses?: string }> = ({
   title,

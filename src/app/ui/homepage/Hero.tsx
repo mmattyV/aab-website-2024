@@ -1,5 +1,5 @@
 import * as React from "react";
-import { HeroProps } from "@/app/lib/types";
+import { HeroProps } from "@/app/lib/definitions";
 
 export const Hero: React.FC<HeroProps> = ({ backgroundImage }) => (
   <div

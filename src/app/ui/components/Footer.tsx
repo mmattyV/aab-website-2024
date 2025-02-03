@@ -1,6 +1,6 @@
 import * as React from "react";
 import Image from "next/image"; // Import Next.js Image component
-import { FooterProps } from "@/app/lib/types";
+import { FooterProps } from "@/app/lib/definitions";
 
 export const Footer: React.FC<FooterProps> = ({ year, logo, icon }) => (
   <div className="flex flex-col items-center self-center mt-20 max-w-full text-sm font-bold tracking-widest text-center text-white w-[326px] max-md:mt-10">

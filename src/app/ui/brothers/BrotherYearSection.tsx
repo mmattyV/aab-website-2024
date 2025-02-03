@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BrotherCard } from "./BrotherCard";
-import { BrotherYearSectionProps } from "@/app/lib/types";
+import { BrotherYearSectionProps } from "@/app/lib/definitions";
 
 export const BrotherYearSection: React.FC<BrotherYearSectionProps> = ({ year, brothers }) => {
   return (

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { MissionProps } from "@/app/lib/types";
+import { MissionProps } from "@/app/lib/definitions";
 import { ActionButton } from "./ActionButton";
 
 export const Mission: React.FC<MissionProps> = ({ text }) => (

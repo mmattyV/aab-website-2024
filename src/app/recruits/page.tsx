@@ -1,6 +1,6 @@
 import * as React from "react";
 import { RecruitYearSection } from "@/app/ui/recruits/RecruitYearSection";
-import { RecruitYearSectionProps } from "@/app/lib/types";
+import { RecruitYearSectionProps } from "@/app/lib/definitions";
 import { Underline } from "@/app/ui/components/Underline";
 
 const recruitsData: RecruitYearSectionProps[] = [

@@ -4,7 +4,7 @@ import * as React from "react";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link"; // Import the Link component
-import { MenuButtonProps } from "@/app/lib/types";
+import { MenuButtonProps } from "@/app/lib/definitions";
 
 export const MenuButton: React.FC<MenuButtonProps> = ({ text, icon }) => {
   const [isOpen, setIsOpen] = useState(false);

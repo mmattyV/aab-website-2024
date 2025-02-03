@@ -1,6 +1,6 @@
 import * as React from "react";
 import { RecruitCard } from "./RecruitCard";
-import { RecruitYearSectionProps } from "@/app/lib/types";
+import { RecruitYearSectionProps } from "@/app/lib/definitions";
 
 export const RecruitYearSection: React.FC<RecruitYearSectionProps> = ({ year, recruits }) => {
   return (
