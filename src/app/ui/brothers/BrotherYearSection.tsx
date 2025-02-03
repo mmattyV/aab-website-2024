@@ -2,7 +2,10 @@ import * as React from "react";
 import { BrotherCard } from "./BrotherCard";
 import { BrotherYearSectionProps } from "@/app/lib/definitions";
 
-export const BrotherYearSection: React.FC<BrotherYearSectionProps> = ({ year, brothers }) => {
+export const BrotherYearSection: React.FC<BrotherYearSectionProps> = ({
+  year,
+  brothers,
+}) => {
   return (
     <div className="flex flex-col mt-9 max-w-full w-[1290px]">
       {/* Year Title */}

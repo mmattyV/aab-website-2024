@@ -20,7 +20,7 @@ const brothers = [
     position: "President",
     bio: "Passionate about leadership and community building.",
     instagram: "matthew.kim",
-    image_url: "/profile-image.jpg"
+    image_url: "/profile-image.jpg",
   },
   {
     id: uuidv4(),
@@ -38,7 +38,7 @@ const brothers = [
     position: "Vice President",
     bio: "Driven by technology and making an impact.",
     instagram: "daniel.nguyen",
-    image_url: "/profile-image.jpg"
+    image_url: "/profile-image.jpg",
   },
 
   // 🟢 Class of 2026
@@ -58,7 +58,7 @@ const brothers = [
     position: "Treasurer",
     bio: "Loves finance and philanthropy.",
     instagram: "sophia.martinez",
-    image_url: "/profile-image.jpg"
+    image_url: "/profile-image.jpg",
   },
   {
     id: uuidv4(),
@@ -76,7 +76,7 @@ const brothers = [
     position: "Recruitment Chair",
     bio: "Focused on bringing new talent to the brotherhood.",
     instagram: "david.smith",
-    image_url: "/profile-image.jpg"
+    image_url: "/profile-image.jpg",
   },
 
   // 🔴 Class of 2027
@@ -96,8 +96,8 @@ const brothers = [
     position: "New Brother",
     bio: "Excited to be part of the brotherhood!",
     instagram: "lucas.johnson",
-    image_url: "/profile-image.jpg"
-  }
+    image_url: "/profile-image.jpg",
+  },
 ];
 
 const recruits = [
@@ -110,7 +110,7 @@ const recruits = [
     phone: "+1 617-555-9876",
     year: 2025,
     room: "Lowell E13",
-    image_url: "/profile-image.jpg"
+    image_url: "/profile-image.jpg",
   },
   {
     id: uuidv4(),
@@ -120,7 +120,7 @@ const recruits = [
     phone: "+1 617-555-7654",
     year: 2025,
     room: "Cabot C21",
-    image_url: "/profile-image.jpg"
+    image_url: "/profile-image.jpg",
   },
 
   // 🟢 Class of 2026
@@ -132,7 +132,7 @@ const recruits = [
     phone: "+1 617-555-5432",
     year: 2026,
     room: "Adams A12",
-    image_url: "/profile-image.jpg"
+    image_url: "/profile-image.jpg",
   },
   {
     id: uuidv4(),
@@ -142,7 +142,7 @@ const recruits = [
     phone: "+1 617-555-6781",
     year: 2026,
     room: "Kirkland B10",
-    image_url: "/profile-image.jpg"
+    image_url: "/profile-image.jpg",
   },
 
   // 🔴 Class of 2027
@@ -154,8 +154,8 @@ const recruits = [
     phone: "+1 617-555-9012",
     year: 2027,
     room: "Winthrop D15",
-    image_url: "/profile-image.jpg"
-  }
+    image_url: "/profile-image.jpg",
+  },
 ];
 
 const recruitComments = [
@@ -164,29 +164,30 @@ const recruitComments = [
     recruit_id: recruits[0].id,
     brother_id: brothers[0].id,
     comment: "James has a great attitude and strong work ethic.",
-    red_flag: "None"
+    red_flag: "None",
   },
   {
     id: uuidv4(),
     recruit_id: recruits[1].id,
     brother_id: brothers[1].id,
-    comment: "Olivia is very social and engaging, but unsure of long-term interest.",
-    red_flag: "Commitment concerns"
+    comment:
+      "Olivia is very social and engaging, but unsure of long-term interest.",
+    red_flag: "Commitment concerns",
   },
   {
     id: uuidv4(),
     recruit_id: recruits[3].id,
     brother_id: brothers[2].id,
     comment: "Sophia has excellent leadership skills.",
-    red_flag: "None"
+    red_flag: "None",
   },
   {
     id: uuidv4(),
     recruit_id: recruits[4].id,
     brother_id: brothers[3].id,
     comment: "Benjamin is interested but lacks confidence in social settings.",
-    red_flag: "Confidence concerns"
-  }
+    red_flag: "Confidence concerns",
+  },
 ];
 
 export { brothers, recruits, recruitComments };

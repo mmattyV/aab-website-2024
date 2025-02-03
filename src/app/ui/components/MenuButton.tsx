@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import * as React from "react";
 import { useState } from "react";
@@ -48,16 +48,32 @@ export const MenuButton: React.FC<MenuButtonProps> = ({ text, icon }) => {
         </button>
         <nav className="flex flex-col mt-16 gap-4 px-6">
           {/* Homepage Link */}
-          <Link href="/" className="text-lg hover:underline" onClick={toggleMenu}>
+          <Link
+            href="/"
+            className="text-lg hover:underline"
+            onClick={toggleMenu}
+          >
             Home
           </Link>
-          <Link href="/brothers" className="text-lg hover:underline" onClick={toggleMenu}>
+          <Link
+            href="/brothers"
+            className="text-lg hover:underline"
+            onClick={toggleMenu}
+          >
             Brothers
           </Link>
-          <Link href="/recruits" className="text-lg hover:underline" onClick={toggleMenu}>
+          <Link
+            href="/recruits"
+            className="text-lg hover:underline"
+            onClick={toggleMenu}
+          >
             Recruits
           </Link>
-          <Link href="/" className="text-lg hover:underline" onClick={toggleMenu}>
+          <Link
+            href="/"
+            className="text-lg hover:underline"
+            onClick={toggleMenu}
+          >
             Login
           </Link>
         </nav>

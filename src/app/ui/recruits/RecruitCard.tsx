@@ -1,9 +1,13 @@
 import * as React from "react";
 import { RecruitCardProps } from "@/app/lib/definitions";
 
-export const RecruitCard: React.FC<RecruitCardProps> = ({ name, house, profileImage }) => {
+export const RecruitCard: React.FC<RecruitCardProps> = ({
+  name,
+  house,
+  profileImage,
+}) => {
   return (
-    <div 
+    <div
       className="relative flex-none basis-[230px] aspect-[3/4] bg-center bg-no-repeat bg-cover"
       style={{
         backgroundImage: `url(${profileImage})`,

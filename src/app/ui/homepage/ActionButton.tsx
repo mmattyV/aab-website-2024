@@ -2,8 +2,12 @@ import * as React from "react";
 import Image from "next/image"; // Import Next.js Image component
 import { ActionButtonProps } from "@/app/lib/definitions";
 
-export const ActionButton: React.FC<ActionButtonProps & { link: string }> = ({ text, icon, link }) => (
-  <a 
+export const ActionButton: React.FC<ActionButtonProps & { link: string }> = ({
+  text,
+  icon,
+  link,
+}) => (
+  <a
     href={link}
     className="flex flex-col justify-center px-3 py-2 border border-solid border-stone-700 rounded-[40px] hover:bg-stone-800 transition"
     target="_blank" // Open the link in a new tab

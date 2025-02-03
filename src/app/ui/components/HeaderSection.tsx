@@ -25,7 +25,11 @@ export const HeaderSection: React.FC = () => {
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
-      Brotherhood<br />Service<br />Activism
+      Brotherhood
+      <br />
+      Service
+      <br />
+      Activism
     </div>
   );
 };

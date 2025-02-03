@@ -4,11 +4,19 @@ import { Underline } from "@/app/ui/components/Underline";
 import { redirect } from "next/navigation";
 
 // ✅ Use `generateMetadata()` to correctly access searchParams
-export async function generateMetadata({ searchParams }: { searchParams: { tab?: string } }) {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: { tab?: string };
+}) {
   return { searchParams };
 }
 
-export default async function Page({ searchParams }: { searchParams?: { tab?: string } }) {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: { tab?: string };
+}) {
   // ✅ Use `await` to correctly handle searchParams
   const params = await searchParams;
   const activeTab = params?.tab || "ALL";
@@ -25,7 +33,10 @@ export default async function Page({ searchParams }: { searchParams?: { tab?: st
         OUR BROTHERS
       </div>
       <div className="flex flex-col items-start px-14 pt-12 pb-40 mt-32 w-full bg-white max-md:px-5 max-md:pb-24 max-md:mt-10 max-md:max-w-full">
-        <nav className="flex gap-7 items-center pl-3 text-xl max-md:text-base text-black" role="navigation">
+        <nav
+          className="flex gap-7 items-center pl-3 text-xl max-md:text-base text-black"
+          role="navigation"
+        >
           {validTabs.map((tab) => (
             <a
               key={tab}
@@ -35,7 +46,11 @@ export default async function Page({ searchParams }: { searchParams?: { tab?: st
               }`}
             >
               {tab}
-              {activeTab === tab ? <Underline /> : <div className="h-[3px] w-full mt-[2px]" />}
+              {activeTab === tab ? (
+                <Underline />
+              ) : (
+                <div className="h-[3px] w-full mt-[2px]" />
+              )}
             </a>
           ))}
         </nav>

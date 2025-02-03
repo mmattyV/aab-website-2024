@@ -29,8 +29,6 @@ export const Footer: React.FC<FooterProps> = ({ year, logo, icon }) => (
     </a>
 
     {/* Footer Text */}
-    <div className="self-stretch mt-6">
-      {year} © AAB | ALL RIGHTS RESERVED
-    </div>
+    <div className="self-stretch mt-6">{year} © AAB | ALL RIGHTS RESERVED</div>
   </div>
 );

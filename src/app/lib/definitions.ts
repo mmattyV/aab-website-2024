@@ -1,111 +1,111 @@
 // This file contains type definitions for our data
 export type Brother = {
-    id: string;
-    first_name: string;
-    last_name: string;
-    personal_email: string;
-    password: string;
-    school_email: string;
-    brother_name: string;
-    house: string;
-    year: number;
-    birthday: string;
-    location: string;
-    phone: string;
-    tagline: string;
-    position: string;
-    bio: string;
-    instagram: string;
-    image_url: string;
+  id: string;
+  first_name: string;
+  last_name: string;
+  personal_email: string;
+  password: string;
+  school_email: string;
+  brother_name: string;
+  house: string;
+  year: number;
+  birthday: string;
+  location: string;
+  phone: string;
+  tagline: string;
+  position: string;
+  bio: string;
+  instagram: string;
+  image_url: string;
 };
 
 export type BrotherOverviewField = {
-    id: string;
-    first_name: string;
-    last_name: string;
-    house: string;
-    position: string;
-    year: number;
-    image_url: string;
+  id: string;
+  first_name: string;
+  last_name: string;
+  house: string;
+  position: string;
+  year: number;
+  image_url: string;
 };
 
 export type Recruit = {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone: string;
-    year: number;
-    room: string;
-    image_url: string;
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  year: number;
+  room: string;
+  image_url: string;
 };
 
 export type RecruitComments = {
-    id: string;
-    recruit_id: string;
-    brother_id: string;
-    comment: string;
-    red_flag: string;
+  id: string;
+  recruit_id: string;
+  brother_id: string;
+  comment: string;
+  red_flag: string;
 };
 
 export interface PillarProps {
-    title: string;
-    description: string;
-    backgroundImage: string;
+  title: string;
+  description: string;
+  backgroundImage: string;
 }
 
 export interface MenuButtonProps {
-    text: string;
-    icon: string;
-    onClick?: () => void;
+  text: string;
+  icon: string;
+  onClick?: () => void;
 }
 
 export interface ActionButtonProps {
-    text: string;
-    icon: string;
-    onClick?: () => void;
+  text: string;
+  icon: string;
+  onClick?: () => void;
 }
 
 export interface FooterProps {
-    year: number;
-    logo: string;
-    icon: string;
+  year: number;
+  logo: string;
+  icon: string;
 }
 
 export interface HeaderProps {
-    logo: string;
-    menuIcon: string;
+  logo: string;
+  menuIcon: string;
 }
 
 export interface HeroProps {
-    backgroundImage: string;
+  backgroundImage: string;
 }
 
 export interface MissionProps {
-    text: string;
+  text: string;
 }
 
 export interface BrotherCardProps {
-    id: string;
-    first_name: string;
-    last_name: string;
-    house: string;
-    position: string;
-    image_url: string;
+  id: string;
+  first_name: string;
+  last_name: string;
+  house: string;
+  position: string;
+  image_url: string;
 }
 
 export interface RecruitCardProps {
-    name: string;
-    house: string;
-    profileImage: string;
+  name: string;
+  house: string;
+  profileImage: string;
 }
 
 export interface BrotherYearSectionProps {
-    year: string;
-    brothers: BrotherCardProps[];
+  year: string;
+  brothers: BrotherCardProps[];
 }
 
 export interface RecruitYearSectionProps {
-    year: string;
-    recruits: RecruitCardProps[];
+  year: string;
+  recruits: RecruitCardProps[];
 }

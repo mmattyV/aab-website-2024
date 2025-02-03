@@ -2,7 +2,10 @@ import * as React from "react";
 import { RecruitCard } from "./RecruitCard";
 import { RecruitYearSectionProps } from "@/app/lib/definitions";
 
-export const RecruitYearSection: React.FC<RecruitYearSectionProps> = ({ year, recruits }) => {
+export const RecruitYearSection: React.FC<RecruitYearSectionProps> = ({
+  year,
+  recruits,
+}) => {
   return (
     <div className="flex flex-col mt-9 max-w-full w-[1290px]">
       {/* Year Title */}

@@ -22,7 +22,9 @@ export const Hero: React.FC<HeroProps> = ({ backgroundImage }) => (
         marginBottom: "-0.2em", // Ensures alignment with the bottom
       }}
     >
-      ASIAN AMERICAN<br />BROTHERHOOD
+      ASIAN AMERICAN
+      <br />
+      BROTHERHOOD
     </div>
   </div>
 );

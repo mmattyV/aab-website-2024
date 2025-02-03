@@ -90,8 +90,9 @@ async function seedRecruits() {
   console.log("🌱 Seeding recruits...");
 
   const insertedRecruits = await Promise.all(
-    recruits.map((recruit) =>
-      client.sql`
+    recruits.map(
+      (recruit) =>
+        client.sql`
         INSERT INTO recruits (id, first_name, last_name, email, phone, year, room, image_url)
         VALUES (${recruit.id}, ${recruit.first_name}, ${recruit.last_name}, ${recruit.email}, 
                 ${recruit.phone}, ${recruit.year}, ${recruit.room}, ${recruit.image_url})
@@ -107,8 +108,9 @@ async function seedRecruitComments() {
   console.log("🌱 Seeding recruit comments...");
 
   const insertedComments = await Promise.all(
-    recruitComments.map((comment) =>
-      client.sql`
+    recruitComments.map(
+      (comment) =>
+        client.sql`
         INSERT INTO recruit_comments (id, recruit_id, brother_id, comment, red_flag)
         VALUES (${comment.id}, ${comment.recruit_id}, ${comment.brother_id}, 
                 ${comment.comment}, ${comment.red_flag})
