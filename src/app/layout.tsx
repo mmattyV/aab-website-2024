@@ -22,7 +22,7 @@ export default function RootLayout({
           <Footer
             year={new Date().getFullYear()}
             logo="/aablogowhite.png"
-            icon="/email-icon.svg"
+            icon="/email-w-icon.svg"
           />
         </footer>
       </body>

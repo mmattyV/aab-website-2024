@@ -8,10 +8,11 @@ export const BrotherCard: React.FC<BrotherCardProps> = ({
   house,
   position,
   image_url,
+  id
 }) => {
   return (
     <Link
-      href={`/brother-profile/${encodeURIComponent(first_name + last_name)}`}
+      href={`/brothers/${id}/details`} // Link to the brother's details page
       passHref
     >
       <div

@@ -29,6 +29,30 @@ export type BrotherOverviewField = {
   image_url: string;
 };
 
+export interface ContactInfo {
+  icon: string;
+  text: string;
+  alt: string;
+}
+
+export interface BrotherProfileProps {
+  first_name: string;
+  last_name: string;
+  personal_email: string;
+  school_email: string;
+  brother_name: string;
+  house: string;
+  year: number;
+  birthday: string;
+  location: string;
+  phone: string;
+  tagline: string;
+  position: string;
+  bio: string;
+  instagram: string;
+  image_url: string;
+}
+
 export type Recruit = {
   id: string;
   first_name: string;
@@ -108,4 +132,10 @@ export interface BrotherYearSectionProps {
 export interface RecruitYearSectionProps {
   year: string;
   recruits: RecruitCardProps[];
+}
+
+export interface BackToButtonProps {
+  text: string;
+  subText: string;
+  icon: string;
 }
