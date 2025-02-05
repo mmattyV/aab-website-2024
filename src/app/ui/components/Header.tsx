@@ -1,5 +1,5 @@
 import * as React from "react";
-import { MenuButton } from "./MenuButton";
+import MenuWrapper from "@/app/ui/components/MenuWrapper";
 import { HeaderSection } from "@/app/ui/components/HeaderSection";
 import Link from "next/link";
 
@@ -14,6 +14,6 @@ export const Header: React.FC = () => (
       </Link>
       <HeaderSection />
     </div>
-    <MenuButton text="MENU" icon="/hamburger-menu.svg" />
+    <MenuWrapper text="MENU" icon="/hamburger-menu.svg" />
   </div>
 );
