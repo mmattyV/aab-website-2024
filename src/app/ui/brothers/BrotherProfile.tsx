@@ -1,5 +1,6 @@
 import * as React from "react";
 import BackToButton from "@/app/ui/components/BackToButton";
+import Image from "next/image";
 import { ContactSection } from "@/app/ui/components/ContactSection";
 import { BrotherProfileProps, ContactInfo } from "@/app/lib/definitions";
 
@@ -76,11 +77,11 @@ export function BrotherProfile({
           md:pr-52
         "
       >
-        {/* Image with min width & centered on small screens */}
-        <img
-          loading="lazy"
+        <Image
           src={image_url}
           alt={`Profile of ${first_name} ${last_name}`}
+          width={487}
+          height={650}
           className="
             object-contain
             w-full

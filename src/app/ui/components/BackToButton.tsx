@@ -1,6 +1,7 @@
 "use client"; // ✅ Ensure this runs as a Client Component
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { BackToButtonProps } from "@/app/lib/definitions";
 
 export default function BackToButton({ text, subText, icon }: BackToButtonProps) {
@@ -14,7 +15,7 @@ export default function BackToButton({ text, subText, icon }: BackToButtonProps)
       >
         <div className="flex items-center">
           <div className="flex gap-2.5 items-center self-stretch p-2.5 my-auto w-[111px]">
-            <img
+            <Image
               loading="lazy"
               src={icon}
               alt=""

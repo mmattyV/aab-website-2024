@@ -1,5 +1,6 @@
 import * as React from "react";
 import { ContactInfo } from "@/app/lib/definitions";
+import Image from 'next/image';
 
 interface ContactSectionProps {
   contacts: ContactInfo[];
@@ -32,7 +33,7 @@ export function ContactSection({
               key={index}
               className="flex gap-2.5 items-center min-w-[180px] max-w-full"
             >
-              <img
+              <Image
                 loading="lazy"
                 src={contact.icon}
                 alt={contact.alt}
