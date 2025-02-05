@@ -2,6 +2,8 @@ import "@/app/ui/globals.css";
 import { questrial } from "@/app/ui/fonts";
 import { Header } from "@/app/ui/components/Header";
 import { Footer } from "./ui/components/Footer";
+import { Suspense } from "react"; // ✅ Import Suspense
+import Loading from "./ui/components/Loading";
 
 export default function RootLayout({
   children,
@@ -15,7 +17,11 @@ export default function RootLayout({
         <Header />
 
         {/* Page Content */}
-        <main className="flex flex-col flex-grow">{children}</main>
+        <main className="flex flex-col flex-grow">
+          <Suspense fallback={<Loading />}>
+            {children}
+          </Suspense>
+        </main>
 
         {/* Footer */}
         <footer className="flex flex-col items-center justify-center w-full mt-5 mb-10">
