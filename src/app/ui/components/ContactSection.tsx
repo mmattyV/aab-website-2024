@@ -38,6 +38,8 @@ export function ContactSection({
                 src={contact.icon}
                 alt={contact.alt}
                 className="object-contain shrink-0 w-7 aspect-square"
+                width={50}
+                height={50}
               />
               <a
                 href={href}

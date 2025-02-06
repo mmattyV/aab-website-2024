@@ -64,6 +64,25 @@ export type Recruit = {
   image_url: string;
 };
 
+export type RecruitProfileProps = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  year: number;
+  room: string;
+  image_url: string;
+};
+
+export type RecruitOverviewField = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  room: string;
+  year: number;
+  image_url: string;
+};
+
 export type RecruitComments = {
   id: string;
   recruit_id: string;
@@ -119,9 +138,11 @@ export interface BrotherCardProps {
 }
 
 export interface RecruitCardProps {
-  name: string;
-  house: string;
-  profileImage: string;
+  id: string;
+  first_name: string;
+  last_name: string;
+  room: string;
+  image_url: string;
 }
 
 export interface BrotherYearSectionProps {
@@ -136,6 +157,7 @@ export interface RecruitYearSectionProps {
 
 export interface BackToButtonProps {
   text: string;
+  type: string;
   subText: string;
   icon: string;
 }

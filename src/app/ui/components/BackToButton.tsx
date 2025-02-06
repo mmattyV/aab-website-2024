@@ -4,12 +4,12 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { BackToButtonProps } from "@/app/lib/definitions";
 
-export default function BackToButton({ text, subText, icon }: BackToButtonProps) {
+export default function BackToButton({ text, type, subText, icon }: BackToButtonProps) {
     const router = useRouter();
   
     return (
       <button
-        onClick={() => router.push("/brothers")}
+        onClick={() => router.push(`/${type}`)}
         className="flex flex-col justify-center px-0.5 py-2 bg-white min-h-[124px] w-[223px] cursor-pointer 
                    transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
       >
@@ -20,6 +20,8 @@ export default function BackToButton({ text, subText, icon }: BackToButtonProps)
               src={icon}
               alt=""
               className="object-contain self-stretch my-auto aspect-square w-[91px] transition-transform duration-300 hover:scale-110"
+              width={50}
+              height={50}
             />
           </div>
           <div className="flex flex-col self-stretch my-auto leading-8 text-black w-[101px]">

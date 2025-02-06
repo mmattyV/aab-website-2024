@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import BrotherFilterTabs from "@/app/ui/components/BrotherFilterTabs";
+import BrotherFilterTabs from "@/app/ui/brothers/BrotherFilterTabs";
 import BrotherSectionWrapper from "@/app/ui/brothers/BrotherSectionWrapper";
 
 type PageProps = {

@@ -2,46 +2,22 @@ import * as React from "react";
 import BackToButton from "@/app/ui/components/BackToButton";
 import Image from "next/image";
 import { ContactSection } from "@/app/ui/components/ContactSection";
-import { BrotherProfileProps, ContactInfo } from "@/app/lib/definitions";
+import { RecruitProfileProps, ContactInfo } from "@/app/lib/definitions";
 
-function formatDate(date: string | Date | null | undefined) {
-  if (!date) return "Not provided";
-  if (typeof date === "string") return date;
-  return new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(date);
-}
-
-export function BrotherProfile({
+export function RecruitProfile({
   first_name = "Unknown",
   last_name = "",
-  personal_email = "",
-  school_email = "",
-  brother_name = "",
-  house = "",
-  year = 0,
-  birthday = "",
-  location = "",
+  email = "",
   phone = "",
-  tagline = "",
-  position = "",
-  bio = "",
-  instagram = "",
+  year = 0,
+  room = "",
   image_url = "https://via.placeholder.com/150",
-}: BrotherProfileProps) {
+}: RecruitProfileProps) {
   const contacts: ContactInfo[] = [
-    personal_email && {
+    email && {
       icon: "/email-r-icon.svg",
-      text: personal_email,
-      alt: "Personal email",
-    },
-    school_email && {
-      icon: "/email-r-icon.svg",
-      text: school_email,
-      alt: "School email",
-    },
-    instagram && {
-      icon: "/instagram-icon.svg",
-      text: `@${instagram}`,
-      alt: "Instagram",
+      text: email,
+      alt: "Email",
     },
     phone && {
       icon: "/phone-icon.svg",
@@ -55,7 +31,7 @@ export function BrotherProfile({
       {/* Header Info (retains margin above position & name) */}
       <div className="flex flex-col text-left w-full pl-16 max-sm:center max-md:pl-8">
         <div className="text-2xl pl-4">
-          {year} | {house} | {position}
+          {year} | {room}
         </div>
         <div className="mt-6 text-8xl max-md:text-6xl pl-3">
           {first_name} {last_name}
@@ -104,24 +80,14 @@ export function BrotherProfile({
         >
           <BackToButton
             text="Back"
-            type="brothers"
-            subText="TO BROTHERS"
+            type="recruits"
+            subText="TO RECRUITS"
             icon="/top-left-arrow.svg"
           />
         </div>
 
         {/* Text (tagline, bio, etc.) */}
         <div className="text-2xl ml-10 max-md:m-10">
-          <div className="pb-2.5 pl-2.5 text-4xl leading-8">
-            {tagline || "No tagline available"}
-          </div>
-          <div className="p-2.5 mt-1 text-xl leading-8">
-            {bio || "No bio available"}
-          </div>
-          <div className="p-2.5 mt-1">Hometown: {location || "Unknown"}</div>
-          <div className="p-2.5 mt-1">Birthday: {formatDate(birthday)}</div>
-          <div className="p-2.5 mt-1">Brother Name: {brother_name || "N/A"}</div>
-
           <div className="ml-2">
             <ContactSection contacts={contacts} firstName={first_name} />
           </div>
