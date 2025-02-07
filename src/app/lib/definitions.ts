@@ -73,6 +73,7 @@ export type RecruitProfileProps = {
   year: number;
   room: string;
   image_url: string;
+  comments: RecruitCommentProps[];
 };
 
 export type RecruitOverviewField = {
