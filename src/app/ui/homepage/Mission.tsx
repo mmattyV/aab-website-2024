@@ -10,7 +10,7 @@ export const Mission: React.FC<MissionProps> = ({ text }) => (
     <ActionButton
       text="CONSTITUTION"
       icon="/right-arrow.svg"
-      link="https://docs.google.com/document/d/1RrwiBT8oUrLCPNXDFlX51LTOPfC8JixzQlR3BSfmUos/edit?usp=sharing"
+      link="/constitution"
     />
     <ActionButton text="BROTHERS" icon="/right-arrow.svg" link="/brothers" />
   </div>

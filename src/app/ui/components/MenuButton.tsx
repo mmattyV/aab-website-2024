@@ -51,6 +51,9 @@ export default function MenuButton({ text, icon, isLoggedIn }: MenuButtonProps) 
           <Link href="/recruits" className="text-lg hover:underline" onClick={toggleMenu}>
             Recruits
           </Link>
+          <Link href="/constitution" className="text-lg hover:underline" onClick={toggleMenu}>
+            Constitution
+          </Link>
 
           {/* Show Login & Sign Up only if NOT logged in */}
           {!isLoggedIn && (

@@ -2,9 +2,16 @@ import * as React from "react";
 import BackToButton from "@/app/ui/components/BackToButton";
 import Image from "next/image";
 import { ContactSection } from "@/app/ui/components/ContactSection";
-import { RecruitProfileProps, ContactInfo, RecruitCommentProps } from "@/app/lib/definitions";
+import {
+  RecruitProfileProps,
+  ContactInfo,
+  RecruitCommentProps,
+} from "@/app/lib/definitions";
+import { auth } from "@/auth"; // Correctly import auth from auth.ts
+import Link from "next/link";
+import { FaEdit, FaPlus } from "react-icons/fa";
 
-export function RecruitProfile({
+export async function RecruitProfile({
   id = "",
   first_name = "Unknown",
   last_name = "",
@@ -15,6 +22,24 @@ export function RecruitProfile({
   image_url = "https://via.placeholder.com/150",
   comments = [],
 }: RecruitProfileProps & { comments: RecruitCommentProps[] }) {
+  // ✅ 1. Get the logged-in user
+  const session = await auth();
+  if (!session || !session.user?.email || !session.user?.id) {
+    console.warn("⚠️ No user session found.");
+    return <div>Please log in to view recruit data.</div>;
+  }
+
+  // ✅ 2. Your brother's ID
+  const brotherId = session.user.id;
+  console.log("Brother ID is: ", brotherId);
+
+  // ✅ 3. Check if the logged-in brother has already left a comment
+  const existingComment = comments.find(
+    (comment) => comment.brother_id === brotherId
+  );
+  console.log("Existing comment:", existingComment);
+
+  // ✅ Filter out empty contacts
   const contacts: ContactInfo[] = [
     email && {
       icon: "/email-r-icon.svg",
@@ -31,12 +56,16 @@ export function RecruitProfile({
   console.log("Recruit id is: ", id);
 
   // ✅ Separate comments and red flags
-  const redFlags = comments.filter((comment) => comment.red_flag.toUpperCase() !== "NONE");
-  const normalComments = comments.filter((comment) => comment.red_flag.toUpperCase() === "NONE");
+  const redFlags = comments.filter(
+    (comment) => comment.red_flag.toUpperCase() !== "NONE"
+  );
+  const normalComments = comments.filter(
+    (comment) => comment.red_flag.toUpperCase() === "NONE"
+  );
 
   return (
     <div className="flex flex-col bg-black text-white overflow-hidden py-80 max-md:py-24">
-      {/* Header Info (retains margin above position & name) */}
+      {/* Header Info */}
       <div className="flex flex-col text-left w-full pl-16 max-sm:center max-md:pl-8">
         <div className="text-2xl pl-4">
           {year} | {room}
@@ -46,46 +75,18 @@ export function RecruitProfile({
         </div>
       </div>
 
-      {/* Single container: Image + Button + Text */}
-      <div
-        className="
-          relative
-          flex
-          flex-col
-          md:flex-row
-          items-start
-          gap-4
-          mt-12
-          max-md:mt-10
-          max-md:max-w-full
-          md:pr-52
-        "
-      >
+      {/* Image + Button + Text */}
+      <div className="relative flex flex-col md:flex-row items-start gap-4 mt-12 max-md:mt-10 max-md:max-w-full md:pr-52">
         <Image
           src={image_url}
           alt={`Profile of ${first_name} ${last_name}`}
           width={487}
           height={650}
-          className="
-            object-contain
-            w-full
-            max-w-[487px]
-            aspect-[0.75]
-            min-w-[400px]
-            max-md:mx-auto
-          "
+          className="object-contain w-full max-w-[487px] aspect-[0.75] min-w-[400px] max-md:mx-auto"
         />
 
         {/* Button: visible on md+ only, absolutely at top-right */}
-        <div
-          className="
-            hidden
-            md:block
-            absolute
-            top-0
-            right-0
-          "
-        >
+        <div className="hidden md:block absolute top-0 right-0">
           <BackToButton
             text="Back"
             type="recruits"
@@ -96,6 +97,27 @@ export function RecruitProfile({
 
         {/* Text (tagline, bio, etc.) */}
         <div className="text-2xl ml-10 max-md:m-10">
+          {/* ✅ Add/Edit Comment Button */}
+          <div className="ml-2 mb-6">
+            {existingComment ? (
+              <Link
+              href={`/recruits/${id}/edit-comment`}
+              className="px-3 py-2 bg-brandRed hover:bg-white hover:text-black transition text-white rounded-full flex items-center gap-1 text-sm w-fit"
+            >
+              <FaEdit className="text-xs mr-1" />
+              Edit Comment
+            </Link>
+            ) : (
+                <Link
+                href={`/recruits/${id}/add-comment`}
+                className="px-3 py-2 bg-brandRed hover:bg-white hover:text-black transition text-white rounded-full flex items-center gap-1 text-sm w-fit"
+              >
+                <FaPlus className="text-xs mr-1" />
+                Add Comment
+              </Link>
+            )}
+          </div>
+
           {/* ✅ Comments Section */}
           <div className="ml-2">
             <h3 className="text-3xl font-semibold mb-2">Recruit Comments</h3>
@@ -115,12 +137,16 @@ export function RecruitProfile({
           {/* ✅ Red Flags Section */}
           {redFlags.length > 0 && (
             <div className="ml-2 mt-6">
-              <h3 className="text-3xl font-semibold mb-2 text-red-500">Red Flags</h3>
+              <h3 className="text-3xl font-semibold mb-2 text-red-500">
+                Red Flags
+              </h3>
               <ul className="space-y-4">
                 {redFlags.map((comment, index) => (
                   <li key={index} className="border-b border-red-500 pb-2">
                     <p className="text-lg text-red-400">{comment.comment}</p>
-                    <p className="text-sm text-red-300">Red Flag: {comment.red_flag}</p>
+                    <p className="text-sm text-red-300">
+                      Red Flag: {comment.red_flag}
+                    </p>
                   </li>
                 ))}
               </ul>
