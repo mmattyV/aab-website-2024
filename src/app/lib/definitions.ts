@@ -65,6 +65,7 @@ export type Recruit = {
 };
 
 export type RecruitProfileProps = {
+  id: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -83,8 +84,15 @@ export type RecruitOverviewField = {
   image_url: string;
 };
 
-export type RecruitComments = {
+export type RecruitComment = {
   id: string;
+  recruit_id: string;
+  brother_id: string;
+  comment: string;
+  red_flag: string;
+};
+
+export type RecruitCommentProps = {
   recruit_id: string;
   brother_id: string;
   comment: string;

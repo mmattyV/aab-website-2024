@@ -1,4 +1,9 @@
-import { BrotherOverviewField, RecruitOverviewField, RecruitProfileProps } from "./definitions";
+import {
+  BrotherOverviewField,
+  RecruitOverviewField,
+  RecruitCommentProps,
+  RecruitProfileProps,
+} from "./definitions";
 import { sql } from "@vercel/postgres";
 import { BrotherProfileProps } from "@/app/lib/definitions";
 
@@ -17,7 +22,9 @@ export async function fetchAllBrothers() {
   }
 }
 
-export async function fetchBrotherById(id: string): Promise<BrotherProfileProps | null> {
+export async function fetchBrotherById(
+  id: string
+): Promise<BrotherProfileProps | null> {
   if (!id) {
     console.error("Error: Missing ID for fetchBrotherById");
     throw new Error("Brother ID is required.");
@@ -72,7 +79,9 @@ export async function fetchAllRecruits() {
   }
 }
 
-export async function fetchRecruitById(id: string): Promise<RecruitProfileProps | null> {
+export async function fetchRecruitById(
+  id: string
+): Promise<RecruitProfileProps | null> {
   if (!id) {
     console.error("Error: Missing ID for fetchRecruitById");
     throw new Error("Recruit ID is required.");
@@ -101,5 +110,20 @@ export async function fetchRecruitById(id: string): Promise<RecruitProfileProps 
   } catch (error) {
     console.error("❌ Error fetching recruit by id:", error);
     throw new Error("Failed to fetch recruit by id.");
+  }
+}
+
+export async function fetchAllComments() {
+  try {
+    const comments = await sql<RecruitCommentProps>`
+            SELECT recruit_id, brother_id, comment, red_flag 
+            FROM recruit_comments
+            ORDER BY brother_id ASC
+        `;
+
+    return comments.rows;
+  } catch (error) {
+    console.error("Error fetching recruit comments", error);
+    throw new Error("Failed to fetch all recruit comments.");
   }
 }

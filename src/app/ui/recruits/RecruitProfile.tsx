@@ -5,6 +5,7 @@ import { ContactSection } from "@/app/ui/components/ContactSection";
 import { RecruitProfileProps, ContactInfo } from "@/app/lib/definitions";
 
 export function RecruitProfile({
+  id = "",
   first_name = "Unknown",
   last_name = "",
   email = "",
@@ -17,7 +18,7 @@ export function RecruitProfile({
     email && {
       icon: "/email-r-icon.svg",
       text: email,
-      alt: "Email",
+      alt: "Personal email",
     },
     phone && {
       icon: "/phone-icon.svg",
@@ -25,6 +26,8 @@ export function RecruitProfile({
       alt: "Phone",
     },
   ].filter(Boolean) as ContactInfo[];
+
+  console.log("Recruit id is: ", id);
 
   return (
     <div className="flex flex-col bg-black text-white overflow-hidden py-80 max-md:py-24">
@@ -88,6 +91,8 @@ export function RecruitProfile({
 
         {/* Text (tagline, bio, etc.) */}
         <div className="text-2xl ml-10 max-md:m-10">
+          
+
           <div className="ml-2">
             <ContactSection contacts={contacts} firstName={first_name} />
           </div>

@@ -1,12 +1,14 @@
-import { fetchAllRecruits } from "@/app/lib/data";
+import { fetchAllComments, fetchAllRecruits } from "@/app/lib/data";
 import { RecruitYearSection } from "@/app/ui/recruits/RecruitYearSection";
 
-export default async function BrotherSectionWrapper({
+export default async function RecruitSectionWrapper({
   activeTab,
 }: {
   activeTab: string;
 }) {
   const allRecruits = await fetchAllRecruits();
+  const allComments = await fetchAllComments();
+  console.log(allComments);
 
   console.log(activeTab);
 

@@ -1,14 +1,19 @@
 import { fetchRecruitById } from "@/app/lib/data";
 import { RecruitProfile } from "@/app/ui/recruits/RecruitProfile";
 
-export default async function Page(props: { params: Promise<{ id: string }> }) {
-    const params = await props.params;
-    const id = params.id;
-    const recruitProfileData = await fetchRecruitById(id);
+type PageProps = {
+  params: Promise<{ id: string }>; // ✅ Explicitly treat params as a Promise
+};
 
-    if (!recruitProfileData) {
-        return <div>Recruit profile not found</div>;
-    }
+export default async function Page(props: PageProps) {
+  const params = await props.params; // ✅ Await params
+  const id = params.id;
 
-    return <RecruitProfile {...recruitProfileData} />; // ✅ Directly pass object props
+  const recruitProfileData = await fetchRecruitById(id);
+
+  if (!recruitProfileData) {
+    return <div>Recruit profile not found</div>;
+  }
+
+  return <RecruitProfile {...recruitProfileData} id={id} />; // ✅ Pass id explicitly
 }
