@@ -169,3 +169,21 @@ export interface BackToButtonProps {
   subText: string;
   icon: string;
 }
+
+export interface MenuButtonProps {
+  text: string;
+  icon: string;
+  isLoggedIn: boolean;
+}
+
+export interface MenuWrapperProps {
+  text: string;
+  icon: string;
+}
+
+export interface BrotherUser {
+  id: string;
+  personal_email: string;
+  password: string;
+  // any other fields from your DB
+}

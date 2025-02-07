@@ -5,12 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PowerIcon } from "@heroicons/react/24/outline";
 import { serverSignOut } from "@/app/lib/actions";
-
-interface MenuButtonProps {
-  text: string;
-  icon: string;
-  isLoggedIn: boolean;
-}
+import { MenuButtonProps } from "@/app/lib/definitions";
 
 export default function MenuButton({ text, icon, isLoggedIn }: MenuButtonProps) {
   const [isOpen, setIsOpen] = useState(false);

@@ -127,3 +127,19 @@ export async function fetchAllComments() {
     throw new Error("Failed to fetch all recruit comments.");
   }
 }
+
+export async function fetchBrotherByEmail(email: string) {
+  try {
+    const brother = await sql`
+      SELECT id, first_name, last_name, personal_email
+      FROM brothers
+      WHERE personal_email = ${email}
+      LIMIT 1;
+    `;
+
+    return brother.rows[0] || null;
+  } catch (error) {
+    console.error("❌ Error fetching brother by email:", error);
+    return null;
+  }
+}
