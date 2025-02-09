@@ -38,7 +38,7 @@ export async function serverSignOut() {
 // ============= COMMENT SCHEMAS / ACTIONS ==============
 
 // Define Zod schema for comment validation
-// NOTE: comment and redFlag are now optional, allowing empty strings
+// comment and redFlag are optional, allowing empty strings
 const CommentSchema = z.object({
   recruitId: z.string().min(1, { message: "Recruit ID is required." }),
   brotherId: z.string().min(1, { message: "Brother ID is required." }),
@@ -62,6 +62,7 @@ export async function createComment(prevState: State, formData: FormData) {
     redFlag: formData.get("redFlag")?.toString() || "",
   };
 
+  // Validate
   const validatedFields = CommentSchema.safeParse(rawFields);
   if (!validatedFields.success) {
     return {
@@ -73,7 +74,9 @@ export async function createComment(prevState: State, formData: FormData) {
   const { recruitId, brotherId, comment, redFlag } = validatedFields.data;
   const commentId = randomUUID();
 
-  // Insert into DB, empty -> null
+  // If redFlag is empty, store "None" by default
+  const finalRedFlag = redFlag || "None";
+
   try {
     await sql`
       INSERT INTO recruit_comments (id, recruit_id, brother_id, comment, red_flag)
@@ -82,7 +85,7 @@ export async function createComment(prevState: State, formData: FormData) {
         ${recruitId},
         ${brotherId},
         ${comment || null},
-        ${redFlag || null}
+        ${finalRedFlag}
       )
     `;
   } catch (error) {
@@ -126,6 +129,7 @@ export async function upsertComment(prevState: State, formData: FormData) {
     commentId: formData.get("commentId")?.toString() || "",
   };
 
+  // Validate
   const validatedFields = CommentSchema.safeParse(rawFields);
   if (!validatedFields.success) {
     return {
@@ -137,17 +141,21 @@ export async function upsertComment(prevState: State, formData: FormData) {
   const { recruitId, brotherId, comment, redFlag } = validatedFields.data;
   const commentId = rawFields.commentId || randomUUID();
 
-  // If commentId already exists, UPDATE; otherwise, INSERT
+  // If redFlag is empty, store "None"
+  const finalRedFlag = redFlag || "None";
+
   try {
     if (rawFields.commentId) {
+      // Update existing comment
       await sql`
         UPDATE recruit_comments 
         SET
           comment = ${comment || null},
-          red_flag = ${redFlag || null}
+          red_flag = ${finalRedFlag}
         WHERE id = ${commentId}
       `;
     } else {
+      // Insert new comment
       await sql`
         INSERT INTO recruit_comments (id, recruit_id, brother_id, comment, red_flag)
         VALUES (
@@ -155,7 +163,7 @@ export async function upsertComment(prevState: State, formData: FormData) {
           ${recruitId},
           ${brotherId},
           ${comment || null},
-          ${redFlag || null}
+          ${finalRedFlag}
         )
       `;
     }
