@@ -10,11 +10,14 @@ import {
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 export default function SignUpPage() {
-  const [isRecruit, setIsRecruit] = useState(false); // Default to Brother Sign-Up
+  // Track whether we are signing up as Recruit or Brother
+  const [isRecruit, setIsRecruit] = useState(false);
+
+  // Initialize state for the server action responses
   const initialState: State = { message: null, errors: {} };
 
-  // Different form actions for brother and recruit sign-ups
-  const [state, brotherFormAction] = useActionState(
+  // Hooks for the two different sign-up actions
+  const [brotherState, brotherFormAction] = useActionState(
     createBrotherAccount,
     initialState
   );
@@ -23,6 +26,11 @@ export default function SignUpPage() {
     initialState
   );
 
+  // We’ll show whichever form state is relevant
+  const formState = isRecruit ? recruitState : brotherState;
+  const formAction = isRecruit ? recruitFormAction : brotherFormAction;
+
+  // Some constants for dropdown lists
   const validYears = ["2028", "2027", "2026", "2025"];
   const positions = [
     "New Brother",
@@ -34,23 +42,18 @@ export default function SignUpPage() {
     "Finance Chair",
   ];
 
-  // For convenience, decide which form state & action to show depending on isRecruit
-  const formState = isRecruit ? recruitState : state;
-  const formAction = isRecruit ? recruitFormAction : brotherFormAction;
-
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
-      {/* Header */}
+      {/* Header Section */}
       <div className="flex overflow-hidden flex-col py-64 bg-black max-md:py-24">
         <div className="gap-2.5 self-start p-2.5 ml-12 text-9xl text-white max-md:max-w-full max-md:text-6xl max-md:ml-[22px] max-sm:text-4xl">
           SIGN UP
         </div>
       </div>
 
-      {/* Sign Up Form */}
+      {/* Main Form Container */}
       <div className="relative w-full flex flex-col items-center mt-[-5rem]">
         <div className="px-4 max-w-lg mx-auto w-full">
-          {/* Conditionally Render Brother or Recruit Sign-Up */}
           <form
             action={formAction}
             className="flex flex-col w-full bg-white text-black rounded-md p-10 max-md:p-6 shadow-lg relative"
@@ -60,18 +63,25 @@ export default function SignUpPage() {
               {isRecruit ? "Sign Up as a Recruit" : "Sign Up as a Brother"}
             </h2>
 
-            {/* Secret Invite Code */}
-            <label htmlFor="invite_code" className="mb-2 font-semibold text-lg">
-              Invitation Code
-            </label>
-            <input
-              id="invite_code"
-              type="text"
-              name="invite_code"
-              placeholder="Enter your code"
-              className="rounded-md border border-gray-300 p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-brandRed"
-              required
-            />
+            {/* Invitation Code (Brother Only) */}
+            {!isRecruit && (
+              <>
+                <label
+                  htmlFor="invite_code"
+                  className="mb-2 font-semibold text-lg"
+                >
+                  Invitation Code
+                </label>
+                <input
+                  id="invite_code"
+                  type="text"
+                  name="invite_code"
+                  placeholder="Enter your code"
+                  className="rounded-md border border-gray-300 p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-brandRed"
+                  required
+                />
+              </>
+            )}
 
             {/* First Name */}
             <label htmlFor="first_name" className="mb-2 font-semibold text-lg">
@@ -102,6 +112,7 @@ export default function SignUpPage() {
             {/* Email Fields */}
             {isRecruit ? (
               <>
+                {/* Recruit Email */}
                 <label htmlFor="email" className="mb-2 font-semibold text-lg">
                   Email
                 </label>
@@ -116,6 +127,7 @@ export default function SignUpPage() {
               </>
             ) : (
               <>
+                {/* Brother Emails */}
                 <label
                   htmlFor="personal_email"
                   className="mb-2 font-semibold text-lg"
@@ -148,13 +160,10 @@ export default function SignUpPage() {
               </>
             )}
 
-            {/* Password Fields (Brother Only) */}
+            {/* Password (Brother Only) */}
             {!isRecruit && (
               <>
-                <label
-                  htmlFor="password"
-                  className="mb-2 font-semibold text-lg"
-                >
+                <label htmlFor="password" className="mb-2 font-semibold text-lg">
                   Password
                 </label>
                 <input
@@ -179,9 +188,9 @@ export default function SignUpPage() {
               className="rounded-md border border-gray-300 p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-brandRed"
               required
             >
-              {validYears.map((year) => (
-                <option key={year} value={year}>
-                  {year}
+              {validYears.map((yearVal) => (
+                <option key={yearVal} value={yearVal}>
+                  {yearVal}
                 </option>
               ))}
             </select>
@@ -199,7 +208,7 @@ export default function SignUpPage() {
               required
             />
 
-            {/* House or Room */}
+            {/* House or Room, depending on user type */}
             {!isRecruit ? (
               <>
                 <label htmlFor="house" className="mb-2 font-semibold text-lg">
@@ -248,10 +257,7 @@ export default function SignUpPage() {
                   required
                 />
 
-                <label
-                  htmlFor="birthday"
-                  className="mb-2 font-semibold text-lg"
-                >
+                <label htmlFor="birthday" className="mb-2 font-semibold text-lg">
                   Birthday
                 </label>
                 <input
@@ -262,10 +268,7 @@ export default function SignUpPage() {
                   required
                 />
 
-                <label
-                  htmlFor="location"
-                  className="mb-2 font-semibold text-lg"
-                >
+                <label htmlFor="location" className="mb-2 font-semibold text-lg">
                   Location
                 </label>
                 <input
@@ -289,10 +292,7 @@ export default function SignUpPage() {
                   required
                 />
 
-                <label
-                  htmlFor="position"
-                  className="mb-2 font-semibold text-lg"
-                >
+                <label htmlFor="position" className="mb-2 font-semibold text-lg">
                   Position
                 </label>
                 <select
@@ -301,9 +301,9 @@ export default function SignUpPage() {
                   className="rounded-md border border-gray-300 p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-brandRed"
                   required
                 >
-                  {positions.map((position) => (
-                    <option key={position} value={position}>
-                      {position}
+                  {positions.map((pos) => (
+                    <option key={pos} value={pos}>
+                      {pos}
                     </option>
                   ))}
                 </select>
@@ -319,10 +319,7 @@ export default function SignUpPage() {
                   required
                 />
 
-                <label
-                  htmlFor="instagram"
-                  className="mb-2 font-semibold text-lg"
-                >
+                <label htmlFor="instagram" className="mb-2 font-semibold text-lg">
                   Instagram Handle (optional)
                 </label>
                 <input
@@ -356,7 +353,7 @@ export default function SignUpPage() {
               {isRecruit ? "Sign Up as a Recruit" : "Sign Up as a Brother"}
             </button>
 
-            {/* Error Message Section */}
+            {/* Error Message */}
             <div
               className="flex h-8 items-end space-x-1 mt-2"
               aria-live="polite"
@@ -370,7 +367,7 @@ export default function SignUpPage() {
               )}
             </div>
 
-            {/* Toggle Button to Switch Forms */}
+            {/* Toggle Button */}
             <button
               type="button"
               onClick={() => setIsRecruit(!isRecruit)}

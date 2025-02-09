@@ -180,7 +180,7 @@ export async function upsertComment(prevState: State, formData: FormData) {
 
 // ============= CREATE BROTHER ACCOUNT =============
 export async function createBrotherAccount(prevState: State, formData: FormData) {
-  // 1) Extract all fields, including "invite_code" for the secret check
+  // 1) Extract all fields, including invite_code
   const rawFields = {
     personal_email: formData.get("personal_email")?.toString() || "",
     school_email: formData.get("school_email")?.toString() || "",
@@ -199,11 +199,10 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
     instagram: formData.get("instagram")?.toString() || "",
     image: formData.get("image") as File | null,
 
-    // New field:
     invite_code: formData.get("invite_code")?.toString() || "",
   };
 
-  // 2) Validate with Zod (already done by BrotherSchema)
+  // 2) Validate with Zod (BrotherSchema)
   const parsed = BrotherSchema.safeParse(rawFields);
   if (!parsed.success) {
     return {
@@ -212,7 +211,7 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
     };
   }
 
-  // 2a) Check secret code
+  // 2a) Check environment secret for Brothers
   const userCode = rawFields.invite_code;
   if (!userCode || userCode !== process.env.SIGNUP_SECRET_CODE) {
     return {
@@ -220,15 +219,13 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
     };
   }
 
-  // 3) Hash the password with bcrypt (saltRounds = 10)
+  // 3) Hash the password (bcrypt)
   const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
 
   // 4) Upload image to Vercel Blob
   const imageFile = parsed.data.image;
   if (!imageFile) {
-    return {
-      message: "No image file was provided.",
-    };
+    return { message: "No image file was provided." };
   }
 
   try {
@@ -239,7 +236,7 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
       contentType: imageFile.type,
     });
 
-    // 5) Insert data + hashed password + image URL
+    // 5) Insert the new Brother row
     const brotherId = randomUUID();
     await sql`
       INSERT INTO brothers (
@@ -283,19 +280,18 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
     `;
   } catch (error) {
     console.error("Database or Upload Error:", error);
-    return {
-      message: "Failed to create brother account.",
-    };
+    return { message: "Failed to create brother account." };
   }
 
-  // 6) Revalidate & Redirect
+  // 6) Revalidate & redirect
   revalidatePath("/brothers");
   redirect("/brothers");
 }
 
 // ============= CREATE RECRUIT ACCOUNT =============
 export async function createRecruitAccount(prevState: State, formData: FormData) {
-  // 1) Extract fields, including "image"
+  // 1) Extract fields
+  // No invite_code needed for Recruits
   const rawFields = {
     email: formData.get("email")?.toString() || "",
     first_name: formData.get("first_name")?.toString() || "",
@@ -315,24 +311,21 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
     };
   }
 
-  // 3) Handle file upload to Vercel Blob
+  // 3) Upload image to Vercel Blob
   const imageFile = parsed.data.image;
   if (!imageFile) {
-    return {
-      message: "No image file was provided.",
-    };
+    return { message: "No image file was provided." };
   }
 
   try {
     const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
     const fileName = `recruit-profile-${randomUUID()}-${imageFile.name}`;
-
     const { url } = await put(fileName, fileBuffer, {
       access: "public",
       contentType: imageFile.type,
     });
 
-    // 4) Insert validated data + image URL into DB
+    // 4) Insert Recruit row
     const recruitId = randomUUID();
     await sql`
       INSERT INTO recruits (
@@ -358,9 +351,7 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
     `;
   } catch (error) {
     console.error("Database or Upload Error:", error);
-    return {
-      message: "Failed to create recruit account.",
-    };
+    return { message: "Failed to create recruit account." };
   }
 
   // 5) Revalidate & redirect
