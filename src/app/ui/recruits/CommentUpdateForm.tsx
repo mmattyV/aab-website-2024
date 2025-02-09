@@ -65,7 +65,7 @@ export default function CommentUpdateForm({
 
       {/* Red Flags Field */}
       <label htmlFor="redFlag" className="mb-2 font-semibold text-lg">
-        {commentId ? "Edit Red Flags" : "Add Red Flags"}
+        {commentId ? "Edit Red Flags (if none, type \"None\")" : "Add Red Flags (if none, type \"None\")"}
       </label>
       <input
         id="redFlag"

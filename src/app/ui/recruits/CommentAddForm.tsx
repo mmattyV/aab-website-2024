@@ -44,7 +44,7 @@ export default function CommentAddForm({
 
       {/* Red Flags Field */}
       <label htmlFor="redFlag" className="mb-2 font-semibold text-lg">
-        Red Flags
+        Red Flags (if none, type &quot;None&quot;)
       </label>
       <input
         id="redFlag"
