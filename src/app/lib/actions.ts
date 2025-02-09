@@ -6,11 +6,9 @@ import { z } from "zod";
 import { sql } from "@vercel/postgres";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { randomUUID } from "crypto"; 
-// ✅ Using the top-level `put(...)` function from "@vercel/blob"
+import { randomUUID } from "crypto";
 import { put } from "@vercel/blob";
 import { BrotherSchema, RecruitSchema } from "./zod-schemas";
-
 import bcrypt from "bcrypt";
 
 // ============= AUTH / SIGNIN / SIGNOUT =================
@@ -37,17 +35,18 @@ export async function serverSignOut() {
   await signOut({ redirectTo: "/" });
 }
 
-// ============= COMMENT SCHEMAS / ACTIONS =============
+// ============= COMMENT SCHEMAS / ACTIONS ==============
 
 // Define Zod schema for comment validation
+// NOTE: comment and redFlag are now optional, allowing empty strings
 const CommentSchema = z.object({
   recruitId: z.string().min(1, { message: "Recruit ID is required." }),
   brotherId: z.string().min(1, { message: "Brother ID is required." }),
-  comment: z.string().min(1, { message: "Comment cannot be empty." }),
+  comment: z.string().optional(),
   redFlag: z.string().optional(),
 });
 
-// Define state type for comments
+// Define state type
 export type State = {
   errors?: Record<string, string[]>;
   message?: string | null;
@@ -55,6 +54,7 @@ export type State = {
 
 // Create a new comment
 export async function createComment(prevState: State, formData: FormData) {
+  // Extract fields
   const rawFields = {
     recruitId: formData.get("recruitId")?.toString() || "",
     brotherId: formData.get("brotherId")?.toString() || "",
@@ -63,7 +63,6 @@ export async function createComment(prevState: State, formData: FormData) {
   };
 
   const validatedFields = CommentSchema.safeParse(rawFields);
-
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
@@ -74,10 +73,17 @@ export async function createComment(prevState: State, formData: FormData) {
   const { recruitId, brotherId, comment, redFlag } = validatedFields.data;
   const commentId = randomUUID();
 
+  // Insert into DB, empty -> null
   try {
     await sql`
       INSERT INTO recruit_comments (id, recruit_id, brother_id, comment, red_flag)
-      VALUES (${commentId}, ${recruitId}, ${brotherId}, ${comment}, ${redFlag || null})
+      VALUES (
+        ${commentId},
+        ${recruitId},
+        ${brotherId},
+        ${comment || null},
+        ${redFlag || null}
+      )
     `;
   } catch (error) {
     console.error("Database Error:", error);
@@ -86,6 +92,7 @@ export async function createComment(prevState: State, formData: FormData) {
     };
   }
 
+  // Revalidate & redirect
   revalidatePath(`/recruits/${recruitId}/details`);
   redirect(`/recruits/${recruitId}/details`);
 }
@@ -116,11 +123,10 @@ export async function upsertComment(prevState: State, formData: FormData) {
     brotherId: formData.get("brotherId")?.toString() || "",
     comment: formData.get("comment")?.toString() || "",
     redFlag: formData.get("redFlag")?.toString() || "",
-    commentId: formData.get("commentId")?.toString() || "", 
+    commentId: formData.get("commentId")?.toString() || "",
   };
 
   const validatedFields = CommentSchema.safeParse(rawFields);
-
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
@@ -131,19 +137,26 @@ export async function upsertComment(prevState: State, formData: FormData) {
   const { recruitId, brotherId, comment, redFlag } = validatedFields.data;
   const commentId = rawFields.commentId || randomUUID();
 
+  // If commentId already exists, UPDATE; otherwise, INSERT
   try {
     if (rawFields.commentId) {
-      // Update existing comment
       await sql`
         UPDATE recruit_comments 
-        SET comment = ${comment}, red_flag = ${redFlag || null}
+        SET
+          comment = ${comment || null},
+          red_flag = ${redFlag || null}
         WHERE id = ${commentId}
       `;
     } else {
-      // Insert new comment
       await sql`
         INSERT INTO recruit_comments (id, recruit_id, brother_id, comment, red_flag)
-        VALUES (${commentId}, ${recruitId}, ${brotherId}, ${comment}, ${redFlag || null})
+        VALUES (
+          ${commentId},
+          ${recruitId},
+          ${brotherId},
+          ${comment || null},
+          ${redFlag || null}
+        )
       `;
     }
   } catch (error) {
@@ -203,15 +216,13 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
     const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
     const fileName = `brother-profile-${randomUUID()}-${imageFile.name}`;
 
-    // Use `put(...)` from "@vercel/blob"
     const { url } = await put(fileName, fileBuffer, {
       access: "public",
-      contentType: imageFile.type, // <-- No 'httpMetadata'
+      contentType: imageFile.type,
     });
 
     // 5) Insert validated data + hashed password + image URL into DB
     const brotherId = randomUUID();
-
     await sql`
       INSERT INTO brothers (
         id, 
@@ -236,7 +247,7 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
         ${brotherId}, 
         ${parsed.data.personal_email}, 
         ${parsed.data.school_email}, 
-        ${hashedPassword},  -- storing hashed password
+        ${hashedPassword}, 
         ${parsed.data.first_name},
         ${parsed.data.last_name},
         ${parsed.data.year},
@@ -259,7 +270,7 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
     };
   }
 
-  // 6) Revalidate and Redirect
+  // 6) Revalidate & Redirect
   revalidatePath("/brothers");
   redirect("/brothers");
 }
@@ -298,7 +309,6 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
     const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
     const fileName = `recruit-profile-${randomUUID()}-${imageFile.name}`;
 
-    // Use `put(...)` from "@vercel/blob"
     const { url } = await put(fileName, fileBuffer, {
       access: "public",
       contentType: imageFile.type,
@@ -306,7 +316,6 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
 
     // 4) Insert validated data + image URL into DB
     const recruitId = randomUUID();
-
     await sql`
       INSERT INTO recruits (
         id, 
@@ -341,7 +350,9 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
   redirect("/");
 }
 
-// Reuse your BrotherSchema or define a partial schema for editing
+// ============= EDIT BROTHER ACCOUNT =============
+
+// Reuse or define a partial schema for editing (from your code)
 const EditBrotherSchema = z.object({
   brotherId: z.string().uuid(),
   first_name: z.string().min(1),
@@ -358,7 +369,6 @@ const EditBrotherSchema = z.object({
   position: z.string().min(1),
   bio: z.string().min(1),
   instagram: z.string().optional(),
-  // image is optional, user may skip uploading
 });
 
 export async function updateBrotherProfile(
@@ -396,7 +406,7 @@ export async function updateBrotherProfile(
   const imageFile = formData.get("image") as File | null;
   let newImageUrl: string | undefined;
 
-  // 3) If user uploaded new image, upload to Vercel Blob
+  // 3) If user uploaded new image, upload
   if (imageFile && imageFile.size > 0) {
     try {
       const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
@@ -418,8 +428,6 @@ export async function updateBrotherProfile(
 
   // 4) Update DB
   try {
-    // Build dynamic update query
-    // If there's a new image, add `image_url = ${newImageUrl}`
     if (newImageUrl) {
       await sql`
         UPDATE brothers
@@ -442,7 +450,6 @@ export async function updateBrotherProfile(
         WHERE id = ${parsed.data.brotherId}
       `;
     } else {
-      // No new image, update everything else
       await sql`
         UPDATE brothers
         SET
@@ -470,7 +477,7 @@ export async function updateBrotherProfile(
     };
   }
 
-  // 5) Revalidate & redirect to e.g. /brothers or /brothers/[id]/details
+  // 5) Revalidate & redirect
   revalidatePath("/brothers");
   redirect("/brothers");
 }
