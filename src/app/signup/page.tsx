@@ -40,6 +40,7 @@ export default function SignUpPage() {
     "Activism Chair",
     "Service Chair",
     "Finance Chair",
+    "Alumni Chair"
   ];
 
   return (

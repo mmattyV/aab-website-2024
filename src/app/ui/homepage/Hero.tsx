@@ -14,13 +14,9 @@ export const Hero: React.FC<HeroProps> = ({ backgroundImage }) => (
       }}
     ></div>
 
-    {/* Text at the bottom */}
+    {/* Text at the bottom, centered horizontally */}
     <div
-      className="absolute bottom-0 w-full px-4 leading-none overflow-hidden text-9xl max-md:text-6xl max-sm:text-5xl break-words"
-      style={{
-        lineHeight: "1",
-        marginBottom: "-0.2em", // Ensures alignment with the bottom
-      }}
+      className="absolute bottom-0 left-1/2 transform -translate-x-1/2 px-4 text-9xl max-md:text-6xl max-sm:text-5xl leading-none"
     >
       ASIAN AMERICAN
       <br />
