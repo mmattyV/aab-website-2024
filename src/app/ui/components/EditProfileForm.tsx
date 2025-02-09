@@ -11,17 +11,18 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
   // Hook into the updateBrotherProfile server action
   const [state, formAction] = useActionState(updateBrotherProfile, initialState);
 
-  // For the dropdown
-  const validYears = ["2028", "2027", "2026", "2025"];
-  const positions = [
-    "New Brother",
-    "Archives",
-    "Brotherhood Chair",
-    "Recruitment Chair",
-    "Activism Chair",
-    "Service Chair",
-    "Finance Chair",
-  ];
+   // Some constants for dropdown lists
+   const validYears = ["2028", "2027", "2026", "2025"];
+   const positions = [
+     "New Brother",
+     "Archives",
+     "Brotherhood Chair",
+     "Recruitment Chair",
+     "Activism Chair",
+     "Service Chair",
+     "Finance Chair",
+     "Alumni Chair"
+   ];
 
   return (
     <form

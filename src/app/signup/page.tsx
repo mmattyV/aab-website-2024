@@ -31,7 +31,7 @@ export default function SignUpPage() {
   const formAction = isRecruit ? recruitFormAction : brotherFormAction;
 
   // Some constants for dropdown lists
-  const validYears = ["2028", "2027", "2026", "2026.5", "2025", "2025.5"];
+  const validYears = ["2028", "2027", "2026", "2025"];
   const positions = [
     "New Brother",
     "Archives",

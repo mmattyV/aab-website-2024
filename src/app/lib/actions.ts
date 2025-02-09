@@ -37,8 +37,6 @@ export async function serverSignOut() {
 
 // ============= COMMENT SCHEMAS / ACTIONS ==============
 
-// Define Zod schema for comment validation
-// comment and redFlag are optional, allowing empty strings
 const CommentSchema = z.object({
   recruitId: z.string().min(1, { message: "Recruit ID is required." }),
   brotherId: z.string().min(1, { message: "Brother ID is required." }),
@@ -46,15 +44,12 @@ const CommentSchema = z.object({
   redFlag: z.string().optional(),
 });
 
-// Define state type
 export type State = {
   errors?: Record<string, string[]>;
   message?: string | null;
 };
 
-// Create a new comment
 export async function createComment(prevState: State, formData: FormData) {
-  // Extract fields
   const rawFields = {
     recruitId: formData.get("recruitId")?.toString() || "",
     brotherId: formData.get("brotherId")?.toString() || "",
@@ -62,7 +57,6 @@ export async function createComment(prevState: State, formData: FormData) {
     redFlag: formData.get("redFlag")?.toString() || "",
   };
 
-  // Validate
   const validatedFields = CommentSchema.safeParse(rawFields);
   if (!validatedFields.success) {
     return {
@@ -74,9 +68,7 @@ export async function createComment(prevState: State, formData: FormData) {
   const { recruitId, brotherId, comment, redFlag } = validatedFields.data;
   const commentId = randomUUID();
 
-  // If redFlag is empty, store "None" by default
   const finalRedFlag = redFlag || "None";
-
   try {
     await sql`
       INSERT INTO recruit_comments (id, recruit_id, brother_id, comment, red_flag)
@@ -95,12 +87,10 @@ export async function createComment(prevState: State, formData: FormData) {
     };
   }
 
-  // Revalidate & redirect
   revalidatePath(`/recruits/${recruitId}/details`);
   redirect(`/recruits/${recruitId}/details`);
 }
 
-// Fetch existing comment by `recruitId` and `brotherId`
 export async function getCommentByRecruitAndBrother(
   recruitId: string,
   brotherId: string
@@ -119,7 +109,6 @@ export async function getCommentByRecruitAndBrother(
   }
 }
 
-// Create or update comment
 export async function upsertComment(prevState: State, formData: FormData) {
   const rawFields = {
     recruitId: formData.get("recruitId")?.toString() || "",
@@ -129,7 +118,6 @@ export async function upsertComment(prevState: State, formData: FormData) {
     commentId: formData.get("commentId")?.toString() || "",
   };
 
-  // Validate
   const validatedFields = CommentSchema.safeParse(rawFields);
   if (!validatedFields.success) {
     return {
@@ -140,13 +128,10 @@ export async function upsertComment(prevState: State, formData: FormData) {
 
   const { recruitId, brotherId, comment, redFlag } = validatedFields.data;
   const commentId = rawFields.commentId || randomUUID();
-
-  // If redFlag is empty, store "None"
   const finalRedFlag = redFlag || "None";
 
   try {
     if (rawFields.commentId) {
-      // Update existing comment
       await sql`
         UPDATE recruit_comments 
         SET
@@ -155,7 +140,6 @@ export async function upsertComment(prevState: State, formData: FormData) {
         WHERE id = ${commentId}
       `;
     } else {
-      // Insert new comment
       await sql`
         INSERT INTO recruit_comments (id, recruit_id, brother_id, comment, red_flag)
         VALUES (
@@ -179,8 +163,8 @@ export async function upsertComment(prevState: State, formData: FormData) {
 }
 
 // ============= CREATE BROTHER ACCOUNT =============
+
 export async function createBrotherAccount(prevState: State, formData: FormData) {
-  // 1) Extract all fields, including invite_code
   const rawFields = {
     personal_email: formData.get("personal_email")?.toString() || "",
     school_email: formData.get("school_email")?.toString() || "",
@@ -198,11 +182,9 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
     bio: formData.get("bio")?.toString() || "",
     instagram: formData.get("instagram")?.toString() || "",
     image: formData.get("image") as File | null,
-
     invite_code: formData.get("invite_code")?.toString() || "",
   };
 
-  // 2) Validate with Zod (BrotherSchema)
   const parsed = BrotherSchema.safeParse(rawFields);
   if (!parsed.success) {
     return {
@@ -211,7 +193,7 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
     };
   }
 
-  // 2a) Check environment secret for Brothers
+  // check the invite code if needed
   const userCode = rawFields.invite_code;
   if (!userCode || userCode !== process.env.SIGNUP_SECRET_CODE) {
     return {
@@ -219,10 +201,7 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
     };
   }
 
-  // 3) Hash the password (bcrypt)
   const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
-
-  // 4) Upload image to Vercel Blob
   const imageFile = parsed.data.image;
   if (!imageFile) {
     return { message: "No image file was provided." };
@@ -236,7 +215,6 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
       contentType: imageFile.type,
     });
 
-    // 5) Insert the new Brother row
     const brotherId = randomUUID();
     await sql`
       INSERT INTO brothers (
@@ -283,15 +261,13 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
     return { message: "Failed to create brother account." };
   }
 
-  // 6) Revalidate & redirect
   revalidatePath("/brothers");
   redirect("/brothers");
 }
 
 // ============= CREATE RECRUIT ACCOUNT =============
+
 export async function createRecruitAccount(prevState: State, formData: FormData) {
-  // 1) Extract fields
-  // No invite_code needed for Recruits
   const rawFields = {
     email: formData.get("email")?.toString() || "",
     first_name: formData.get("first_name")?.toString() || "",
@@ -302,7 +278,6 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
     image: formData.get("image") as File | null,
   };
 
-  // 2) Validate with Zod
   const parsed = RecruitSchema.safeParse(rawFields);
   if (!parsed.success) {
     return {
@@ -311,7 +286,6 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
     };
   }
 
-  // 3) Upload image to Vercel Blob
   const imageFile = parsed.data.image;
   if (!imageFile) {
     return { message: "No image file was provided." };
@@ -325,7 +299,6 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
       contentType: imageFile.type,
     });
 
-    // 4) Insert Recruit row
     const recruitId = randomUUID();
     await sql`
       INSERT INTO recruits (
@@ -354,14 +327,13 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
     return { message: "Failed to create recruit account." };
   }
 
-  // 5) Revalidate & redirect
   revalidatePath("/");
   redirect("/");
 }
 
 // ============= EDIT BROTHER ACCOUNT =============
 
-// Reuse or define a partial schema for editing (from your code)
+// ✅ FIX: Add optional `image` field in the Zod schema
 const EditBrotherSchema = z.object({
   brotherId: z.string().uuid(),
   first_name: z.string().min(1),
@@ -378,13 +350,15 @@ const EditBrotherSchema = z.object({
   position: z.string().min(1),
   bio: z.string().min(1),
   instagram: z.string().optional(),
+  // ✅ Optional image field to avoid Zod errors on new file
+  image: z.any().optional(),
 });
 
 export async function updateBrotherProfile(
-  prevState: { errors?: Record<string, string[]>; message?: string | null },
+  prevState: State,
   formData: FormData
 ) {
-  // 1) Extract raw fields, including optional "image"
+  // 1) Extract raw fields
   const rawFields = {
     brotherId: formData.get("brotherId")?.toString() || "",
     first_name: formData.get("first_name")?.toString() || "",
@@ -404,7 +378,11 @@ export async function updateBrotherProfile(
   };
 
   // 2) Validate with Zod
-  const parsed = EditBrotherSchema.safeParse(rawFields);
+  // Because `image` is optional, Zod won't fail if we don't provide it
+  const parsed = EditBrotherSchema.safeParse({
+    ...rawFields,
+    image: formData.get("image"), // pass along the file, if any
+  });
   if (!parsed.success) {
     return {
       errors: parsed.error.flatten().fieldErrors,
@@ -412,20 +390,18 @@ export async function updateBrotherProfile(
     };
   }
 
-  const imageFile = formData.get("image") as File | null;
+  // 3) If there's a new file, handle it
+  const imageFile = parsed.data.image as File | null;
   let newImageUrl: string | undefined;
 
-  // 3) If user uploaded new image, upload
   if (imageFile && imageFile.size > 0) {
     try {
       const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
       const fileName = `brother-profile-${randomUUID()}-${imageFile.name}`;
-
       const { url } = await put(fileName, fileBuffer, {
         access: "public",
         contentType: imageFile.type,
       });
-
       newImageUrl = url;
     } catch (error) {
       console.error("Image Upload Error:", error);
@@ -435,7 +411,7 @@ export async function updateBrotherProfile(
     }
   }
 
-  // 4) Update DB
+  // 4) Update DB record
   try {
     if (newImageUrl) {
       await sql`
@@ -486,7 +462,7 @@ export async function updateBrotherProfile(
     };
   }
 
-  // 5) Revalidate & redirect
+  // 5) Revalidate and redirect
   revalidatePath("/brothers");
   redirect("/brothers");
 }
