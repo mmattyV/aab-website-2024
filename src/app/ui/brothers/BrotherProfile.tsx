@@ -33,8 +33,8 @@ export function BrotherProfile({
   isLoggedIn = false,
 }: BrotherProfileComponentProps) {
   // Build the contacts array
-  // 1) Always show personal & school emails
-  // 2) Only show phone & instagram if user is logged in
+  // Always show personal & school emails
+  // Only show phone & instagram if user is logged in
   const contacts: ContactInfo[] = [
     personal_email && {
       icon: "/email-r-icon.svg",
@@ -46,7 +46,7 @@ export function BrotherProfile({
       text: school_email,
       alt: "School email",
     },
-    // If user is logged in, add these two:
+    // If user is logged in, add phone & instagram
     isLoggedIn && instagram && {
       icon: "/instagram-icon.svg",
       text: `@${instagram}`,
@@ -61,7 +61,7 @@ export function BrotherProfile({
 
   return (
     <div className="flex flex-col bg-black text-white overflow-hidden py-80 max-md:py-24">
-      {/* Header Info (retains margin above position & name) */}
+      {/* Header Info */}
       <div className="flex flex-col text-left w-full pl-16 max-sm:center max-md:pl-8">
         <div className="text-2xl pl-4">
           {year} | {house} | {position}
@@ -71,7 +71,7 @@ export function BrotherProfile({
         </div>
       </div>
 
-      {/* Single container: Image + Button + Text */}
+      {/* Container: Image + Button + Text */}
       <div
         className="
           relative
@@ -127,12 +127,23 @@ export function BrotherProfile({
           <div className="p-2.5 mt-1 text-xl leading-8">
             {bio || "No bio available"}
           </div>
-          <div className="p-2.5 mt-1">Hometown: {location || "Unknown"}</div>
-          <div className="p-2.5 mt-1">Birthday: {formatDate(birthday)}</div>
-          <div className="p-2.5 mt-1">Brother Name: {brother_name || "N/A"}</div>
+
+          {/* Only show these if logged in */}
+          {isLoggedIn && (
+            <>
+              <div className="p-2.5 mt-1">
+                Hometown: {location || "Unknown"}
+              </div>
+              <div className="p-2.5 mt-1">
+                Birthday: {formatDate(birthday)}
+              </div>
+              <div className="p-2.5 mt-1">
+                Brother Name: {brother_name || "N/A"}
+              </div>
+            </>
+          )}
 
           <div className="ml-2">
-            {/* Renders only the contacts we included above */}
             <ContactSection contacts={contacts} firstName={first_name} />
           </div>
         </div>

@@ -34,7 +34,7 @@ export default function SignUpPage() {
     "Finance Chair",
   ];
 
-  // For convenience, we'll decide which "form state" to show depending on isRecruit
+  // For convenience, decide which form state & action to show depending on isRecruit
   const formState = isRecruit ? recruitState : state;
   const formAction = isRecruit ? recruitFormAction : brotherFormAction;
 
@@ -59,6 +59,19 @@ export default function SignUpPage() {
             <h2 className="text-4xl font-bold mb-4">
               {isRecruit ? "Sign Up as a Recruit" : "Sign Up as a Brother"}
             </h2>
+
+            {/* Secret Invite Code */}
+            <label htmlFor="invite_code" className="mb-2 font-semibold text-lg">
+              Invitation Code
+            </label>
+            <input
+              id="invite_code"
+              type="text"
+              name="invite_code"
+              placeholder="Enter your code"
+              className="rounded-md border border-gray-300 p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-brandRed"
+              required
+            />
 
             {/* First Name */}
             <label htmlFor="first_name" className="mb-2 font-semibold text-lg">
