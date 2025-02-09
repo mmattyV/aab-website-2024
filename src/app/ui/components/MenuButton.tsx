@@ -54,6 +54,9 @@ export default function MenuButton({ text, icon, isLoggedIn }: MenuButtonProps) 
           <Link href="/constitution" className="text-lg hover:underline" onClick={toggleMenu}>
             Constitution
           </Link>
+          <Link href="/edit-profile" className="text-lg hover:underline" onClick={toggleMenu}>
+            Edit Profile
+          </Link>
 
           {/* Show Login & Sign Up only if NOT logged in */}
           {!isLoggedIn && (

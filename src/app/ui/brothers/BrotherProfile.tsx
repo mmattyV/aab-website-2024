@@ -10,6 +10,10 @@ function formatDate(date: string | Date | null | undefined) {
   return new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(date);
 }
 
+type BrotherProfileComponentProps = BrotherProfileProps & {
+  isLoggedIn?: boolean; // pass a boolean to decide what contact info to show
+};
+
 export function BrotherProfile({
   first_name = "Unknown",
   last_name = "",
@@ -26,7 +30,11 @@ export function BrotherProfile({
   bio = "",
   instagram = "",
   image_url = "https://via.placeholder.com/150",
-}: BrotherProfileProps) {
+  isLoggedIn = false,
+}: BrotherProfileComponentProps) {
+  // Build the contacts array
+  // 1) Always show personal & school emails
+  // 2) Only show phone & instagram if user is logged in
   const contacts: ContactInfo[] = [
     personal_email && {
       icon: "/email-r-icon.svg",
@@ -38,12 +46,13 @@ export function BrotherProfile({
       text: school_email,
       alt: "School email",
     },
-    instagram && {
+    // If user is logged in, add these two:
+    isLoggedIn && instagram && {
       icon: "/instagram-icon.svg",
       text: `@${instagram}`,
       alt: "Instagram",
     },
-    phone && {
+    isLoggedIn && phone && {
       icon: "/phone-icon.svg",
       text: phone,
       alt: "Phone",
@@ -123,6 +132,7 @@ export function BrotherProfile({
           <div className="p-2.5 mt-1">Brother Name: {brother_name || "N/A"}</div>
 
           <div className="ml-2">
+            {/* Renders only the contacts we included above */}
             <ContactSection contacts={contacts} firstName={first_name} />
           </div>
         </div>

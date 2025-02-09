@@ -49,8 +49,8 @@ export interface BrotherProfileProps {
   tagline: string;
   position: string;
   bio: string;
-  instagram: string;
-  image_url: string;
+  instagram?: string;
+  image_url?: string;
 }
 
 export type Recruit = {

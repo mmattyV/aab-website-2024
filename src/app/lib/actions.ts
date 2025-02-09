@@ -340,3 +340,137 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
   revalidatePath("/");
   redirect("/");
 }
+
+// Reuse your BrotherSchema or define a partial schema for editing
+const EditBrotherSchema = z.object({
+  brotherId: z.string().uuid(),
+  first_name: z.string().min(1),
+  last_name: z.string().min(1),
+  personal_email: z.string().email(),
+  school_email: z.string().email(),
+  year: z.string().regex(/^\d{4}$/),
+  phone: z.string().min(1),
+  house: z.string().min(1),
+  brother_name: z.string().min(1),
+  birthday: z.string(),
+  location: z.string().min(1),
+  tagline: z.string().min(1),
+  position: z.string().min(1),
+  bio: z.string().min(1),
+  instagram: z.string().optional(),
+  // image is optional, user may skip uploading
+});
+
+export async function updateBrotherProfile(
+  prevState: { errors?: Record<string, string[]>; message?: string | null },
+  formData: FormData
+) {
+  // 1) Extract raw fields, including optional "image"
+  const rawFields = {
+    brotherId: formData.get("brotherId")?.toString() || "",
+    first_name: formData.get("first_name")?.toString() || "",
+    last_name: formData.get("last_name")?.toString() || "",
+    personal_email: formData.get("personal_email")?.toString() || "",
+    school_email: formData.get("school_email")?.toString() || "",
+    year: formData.get("year")?.toString() || "",
+    phone: formData.get("phone")?.toString() || "",
+    house: formData.get("house")?.toString() || "",
+    brother_name: formData.get("brother_name")?.toString() || "",
+    birthday: formData.get("birthday")?.toString() || "",
+    location: formData.get("location")?.toString() || "",
+    tagline: formData.get("tagline")?.toString() || "",
+    position: formData.get("position")?.toString() || "",
+    bio: formData.get("bio")?.toString() || "",
+    instagram: formData.get("instagram")?.toString() || "",
+  };
+
+  // 2) Validate with Zod
+  const parsed = EditBrotherSchema.safeParse(rawFields);
+  if (!parsed.success) {
+    return {
+      errors: parsed.error.flatten().fieldErrors,
+      message: "Validation failed. Please check your inputs.",
+    };
+  }
+
+  const imageFile = formData.get("image") as File | null;
+  let newImageUrl: string | undefined;
+
+  // 3) If user uploaded new image, upload to Vercel Blob
+  if (imageFile && imageFile.size > 0) {
+    try {
+      const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
+      const fileName = `brother-profile-${randomUUID()}-${imageFile.name}`;
+
+      const { url } = await put(fileName, fileBuffer, {
+        access: "public",
+        contentType: imageFile.type,
+      });
+
+      newImageUrl = url;
+    } catch (error) {
+      console.error("Image Upload Error:", error);
+      return {
+        message: "Failed to upload new profile picture.",
+      };
+    }
+  }
+
+  // 4) Update DB
+  try {
+    // Build dynamic update query
+    // If there's a new image, add `image_url = ${newImageUrl}`
+    if (newImageUrl) {
+      await sql`
+        UPDATE brothers
+        SET
+          first_name = ${parsed.data.first_name},
+          last_name = ${parsed.data.last_name},
+          personal_email = ${parsed.data.personal_email},
+          school_email = ${parsed.data.school_email},
+          year = ${parsed.data.year},
+          phone = ${parsed.data.phone},
+          house = ${parsed.data.house},
+          brother_name = ${parsed.data.brother_name},
+          birthday = ${parsed.data.birthday},
+          location = ${parsed.data.location},
+          tagline = ${parsed.data.tagline},
+          position = ${parsed.data.position},
+          bio = ${parsed.data.bio},
+          instagram = ${parsed.data.instagram || null},
+          image_url = ${newImageUrl}
+        WHERE id = ${parsed.data.brotherId}
+      `;
+    } else {
+      // No new image, update everything else
+      await sql`
+        UPDATE brothers
+        SET
+          first_name = ${parsed.data.first_name},
+          last_name = ${parsed.data.last_name},
+          personal_email = ${parsed.data.personal_email},
+          school_email = ${parsed.data.school_email},
+          year = ${parsed.data.year},
+          phone = ${parsed.data.phone},
+          house = ${parsed.data.house},
+          brother_name = ${parsed.data.brother_name},
+          birthday = ${parsed.data.birthday},
+          location = ${parsed.data.location},
+          tagline = ${parsed.data.tagline},
+          position = ${parsed.data.position},
+          bio = ${parsed.data.bio},
+          instagram = ${parsed.data.instagram || null}
+        WHERE id = ${parsed.data.brotherId}
+      `;
+    }
+  } catch (error) {
+    console.error("Database Error:", error);
+    return {
+      message: "Database Error: Failed to update profile.",
+    };
+  }
+
+  // 5) Revalidate & redirect to e.g. /brothers or /brothers/[id]/details
+  revalidatePath("/brothers");
+  redirect("/brothers");
+}

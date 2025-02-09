@@ -7,7 +7,6 @@ export default async function BrotherSectionWrapper({
   activeTab: string;
 }) {
   const allBrothers = await fetchAllBrothers();
-  console.log(allBrothers);
 
   // ✅ Filter based on active tab
   const filteredBrothers =
