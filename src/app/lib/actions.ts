@@ -10,6 +10,7 @@ import { randomUUID } from "crypto";
 import { put } from "@vercel/blob";
 import { BrotherSchema, RecruitSchema, EditBrotherSchema } from "./zod-schemas";
 import bcrypt from "bcrypt";
+import { validateImageFile } from "@/app/utils/validateImage";
 
 // ============= AUTH / SIGNIN / SIGNOUT =================
 export async function authenticate(
@@ -209,9 +210,9 @@ export async function createBrotherAccount(
   // 3) Validate image file extension
   const imageFile = parsed.data.image;
   if (imageFile) {
-    const extension = imageFile.name.split('.').pop()?.toLowerCase();
-    if (extension === 'heic' || extension === 'heif') {
-      return { message: "HEIC and HEIF files are not allowed." };
+    const validationError = validateImageFile(imageFile);
+    if (validationError) {
+      return { message: validationError };
     }
   } else {
     return { message: "No image file was provided." };
@@ -304,14 +305,13 @@ export async function createRecruitAccount(
   }
 
   const imageFile = parsed.data.image;
-  if (!imageFile) {
-    return { message: "No image file provided." };
-  }
-
-  // Validate image file extension
-  const extension = imageFile.name.split('.').pop()?.toLowerCase();
-  if (extension === 'heic' || extension === 'heif') {
-    return { message: "HEIC and HEIF files are not allowed." };
+  if (imageFile) {
+    const validationError = validateImageFile(imageFile);
+    if (validationError) {
+      return { message: validationError };
+    }
+  } else {
+    return { message: "No image file was provided." };
   }
 
   try {
@@ -393,10 +393,10 @@ export async function updateBrotherProfile(
   let newImageUrl: string | undefined;
   const imageFile = parsed.data.image;
   if (imageFile && imageFile.size > 0) {
-    // Validate image file extension
-    const extension = imageFile.name.split('.').pop()?.toLowerCase();
-    if (extension === 'heic' || extension === 'heif') {
-      return { message: "HEIC and HEIF files are not allowed." };
+    // 3) Validate image file
+    const validationError = validateImageFile(imageFile);
+    if (validationError) {
+      return { message: validationError };
     }
 
     try {

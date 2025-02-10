@@ -1,25 +1,49 @@
 "use client";
 
 import { useActionState } from "react";
-import { updateBrotherProfile, State } from "@/app/lib/actions"; 
+import { updateBrotherProfile, State } from "@/app/lib/actions";
 import { BrotherProfileProps } from "@/app/lib/definitions";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 
-export default function EditProfileForm({ brother, id }: { brother: BrotherProfileProps, id: string}) {
+export default function EditProfileForm({
+  brother,
+  id,
+}: {
+  brother: BrotherProfileProps;
+  id: string;
+}) {
   const initialState: State = { message: null, errors: {} };
-  const [state, formAction] = useActionState(updateBrotherProfile, initialState);
+  const [state, formAction] = useActionState(
+    updateBrotherProfile,
+    initialState
+  );
 
   const [imageError, setImageError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setImageError(null);
     const file = e.target.files?.[0];
     if (file) {
-      const extension = file.name.split('.').pop()?.toLowerCase();
-      if (extension === 'heic' || extension === 'heif') {
-        setImageError("HEIC and HEIF files are not allowed.");
-        e.target.value = "";
+      const allowedExtensions = ["jpeg", "jpg", "png"];
+      const allowedMimeTypes = ["image/jpeg", "image/png"];
+
+      const extension = file.name.split(".").pop()?.toLowerCase();
+      const isValidExtension =
+        extension && allowedExtensions.includes(extension);
+      const isValidMimeType = allowedMimeTypes.includes(file.type);
+
+      if (!isValidExtension || !isValidMimeType) {
+        setImageError("Only JPEG, JPG, and PNG files are allowed.");
+        e.target.value = ""; // Reset the input
+      }
+      if (isValidExtension && isValidMimeType) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
       }
     }
   };
@@ -34,7 +58,7 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
     "Activism Chair",
     "Service Chair",
     "Finance Chair",
-    "Alumni Chair"
+    "Alumni Chair",
   ];
 
   return (
@@ -164,7 +188,7 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
         id="birthday"
         type="date"
         name="birthday"
-        defaultValue={brother.birthday} 
+        defaultValue={brother.birthday}
         className="rounded-md border border-gray-300 p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-brandRed"
         required
       />
@@ -245,18 +269,27 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
         id="image"
         type="file"
         name="image"
-        accept="image/*"
+        accept=".jpeg,.jpg,.png,image/jpeg,image/png"
         className="rounded-md border border-gray-300 p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-brandRed"
         onChange={handleImageChange}
       />
-      {imageError && (
-        <p className="text-sm text-red-500 mb-4">{imageError}</p>
+      {imageError && <p className="text-sm text-red-500 mb-4">{imageError}</p>}
+
+      {imagePreview && (
+        <img
+          src={imagePreview}
+          alt="Image Preview"
+          className="mt-2 mb-2 w-32 h-32 object-cover rounded-md"
+        />
       )}
 
       {/* Submit Button */}
       <button
         type="submit"
-        className="bg-brandRed text-white py-2 rounded-md font-semibold hover:bg-black transition-colors"
+        disabled={!!imageError}
+        className={`bg-brandRed text-white py-2 rounded-md font-semibold hover:bg-black transition-colors ${
+          imageError ? "opacity-50 cursor-not-allowed" : ""
+        }`}
       >
         Update Profile
       </button>

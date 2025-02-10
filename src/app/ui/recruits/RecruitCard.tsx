@@ -26,10 +26,10 @@ export const RecruitCard: React.FC<RecruitCardProps> = ({
 
         {/* Text Container Positioned at Bottom Left, Always White */}
         <div className="absolute bottom-4 left-4 text-white z-10 group-hover:text-white transition-colors duration-300">
-          <div className="text-3xl leading-none">
+          <div className="text-3xl text-shadow-lg leading-none">
             {first_name + " " + last_name}
           </div>
-          <div className="text-sm leading-loose">
+          <div className="text-sm text-shadow-lg leading-loose">
             {room}
           </div>
         </div>

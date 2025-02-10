@@ -18,9 +18,17 @@ export const BrotherSchema = z.object({
   bio: z.string().min(1),
   instagram: z.string().optional(),
   // Instead of inline arrow function, define it separately or inline:
-  image: z.custom<File>((val): val is File => val instanceof File && val.size > 0, {
-    message: "Please upload an image file.",
-  }),
+  image: z
+    .instanceof(File)
+    .refine((file) => {
+      const allowedExtensions = ['jpeg', 'jpg', 'png'];
+      const extension = file.name.split('.').pop()?.toLowerCase();
+      return extension && allowedExtensions.includes(extension);
+    }, "Only JPEG, JPG, and PNG files are allowed.")
+    .refine((file) => {
+      const allowedMimeTypes = ['image/jpeg', 'image/png'];
+      return allowedMimeTypes.includes(file.type);
+    }, "Invalid image file type."),
 });
 
 export const RecruitSchema = z.object({
@@ -30,9 +38,17 @@ export const RecruitSchema = z.object({
   year: z.string().regex(/^\d{4}$/),
   phone: z.string().min(1),
   room: z.string().min(1),
-  image: z.custom<File>((val): val is File => val instanceof File && val.size > 0, {
-    message: "Please upload an image file.",
-  }),
+  image: z
+    .instanceof(File)
+    .refine((file) => {
+      const allowedExtensions = ['jpeg', 'jpg', 'png'];
+      const extension = file.name.split('.').pop()?.toLowerCase();
+      return extension && allowedExtensions.includes(extension);
+    }, "Only JPEG, JPG, and PNG files are allowed.")
+    .refine((file) => {
+      const allowedMimeTypes = ['image/jpeg', 'image/png'];
+      return allowedMimeTypes.includes(file.type);
+    }, "Invalid image file type."),
 });
 
 export const EditBrotherSchema = z.object({
@@ -52,5 +68,17 @@ export const EditBrotherSchema = z.object({
     bio: z.string().min(1),
     instagram: z.string().optional(),
     // ✅ Optional image field to avoid Zod errors on new file
-    image: z.any().optional(),
+    image: z
+    .optional(z.instanceof(File))
+    .refine((file) => {
+      if (!file) return true; // Skip validation if no file is uploaded
+      const allowedExtensions = ['jpeg', 'jpg', 'png'];
+      const extension = file.name.split('.').pop()?.toLowerCase();
+      return extension && allowedExtensions.includes(extension);
+    }, "Only JPEG, JPG, and PNG files are allowed.")
+    .refine((file) => {
+      if (!file) return true;
+      const allowedMimeTypes = ['image/jpeg', 'image/png'];
+      return allowedMimeTypes.includes(file.type);
+    }, "Invalid image file type."),
   });

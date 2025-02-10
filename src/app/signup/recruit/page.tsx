@@ -1,10 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import {
-  createRecruitAccount,
-  State,
-} from "@/app/lib/actions";
+import { createRecruitAccount, State } from "@/app/lib/actions";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 
@@ -16,15 +13,30 @@ export default function RecruitSignUpPage() {
   );
 
   const [imageError, setImageError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setImageError(null);
     const file = e.target.files?.[0];
     if (file) {
-      const extension = file.name.split('.').pop()?.toLowerCase();
-      if (extension === 'heic' || extension === 'heif') {
-        setImageError("HEIC and HEIF files are not allowed.");
-        e.target.value = "";
+      const allowedExtensions = ["jpeg", "jpg", "png"];
+      const allowedMimeTypes = ["image/jpeg", "image/png"];
+
+      const extension = file.name.split(".").pop()?.toLowerCase();
+      const isValidExtension =
+        extension && allowedExtensions.includes(extension);
+      const isValidMimeType = allowedMimeTypes.includes(file.type);
+
+      if (!isValidExtension || !isValidMimeType) {
+        setImageError("Only JPEG, JPG, and PNG files are allowed.");
+        e.target.value = ""; // Reset the input
+      }
+      if (isValidExtension && isValidMimeType) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
       }
     }
   };
@@ -46,9 +58,7 @@ export default function RecruitSignUpPage() {
             className="flex flex-col w-full bg-white text-black rounded-md p-10 max-md:p-6 shadow-lg relative"
           >
             {/* Title */}
-            <h2 className="text-4xl font-bold mb-4">
-              Sign Up as a Recruit
-            </h2>
+            <h2 className="text-4xl font-bold mb-4">Sign Up as a Recruit</h2>
 
             {/* First Name */}
             <label htmlFor="first_name" className="mb-2 font-semibold text-lg">
@@ -140,7 +150,7 @@ export default function RecruitSignUpPage() {
               id="image"
               type="file"
               name="image"
-              accept="image/*"
+              accept=".jpeg,.jpg,.png,image/jpeg,image/png"
               className="rounded-md border border-gray-300 p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-brandRed"
               required
               onChange={handleImageChange}
@@ -149,10 +159,21 @@ export default function RecruitSignUpPage() {
               <p className="text-sm text-red-500 mb-4">{imageError}</p>
             )}
 
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Image Preview"
+                className="mt-2 mb-4 w-32 h-32 object-cover rounded-md"
+              />
+            )}
+
             {/* Submit Button */}
             <button
               type="submit"
-              className="bg-brandRed text-white py-2 rounded-md font-semibold hover:bg-black transition-colors"
+              disabled={!!imageError}
+              className={`bg-brandRed text-white py-2 rounded-md font-semibold hover:bg-black transition-colors ${
+                imageError ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
               Sign Up as a Recruit
             </button>
