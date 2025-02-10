@@ -67,18 +67,34 @@ export const EditBrotherSchema = z.object({
     position: z.string().min(1),
     bio: z.string().min(1),
     instagram: z.string().optional(),
-    // ✅ Optional image field to avoid Zod errors on new file
+  
+    // ✅ Make `image` fully optional and skip validation if no file is provided
     image: z
-    .optional(z.instanceof(File))
-    .refine((file) => {
-      if (!file) return true; // Skip validation if no file is uploaded
-      const allowedExtensions = ['jpeg', 'jpg', 'png'];
-      const extension = file.name.split('.').pop()?.toLowerCase();
-      return extension && allowedExtensions.includes(extension);
-    }, "Only JPEG, JPG, and PNG files are allowed.")
-    .refine((file) => {
-      if (!file) return true;
-      const allowedMimeTypes = ['image/jpeg', 'image/png'];
-      return allowedMimeTypes.includes(file.type);
-    }, "Invalid image file type."),
+      .union([z.instanceof(File), z.null(), z.undefined()]) // Allow null and undefined
+      .refine(
+        (file) => {
+          // Skip validation if no file is provided
+          if (!file || !(file instanceof File)) {
+            return true; // No file, so validation passes
+          }
+  
+          // Validate file extension
+          const allowedExtensions = ["jpeg", "jpg", "png"];
+          const extension = file.name.split(".").pop()?.toLowerCase();
+          if (!extension || !allowedExtensions.includes(extension)) {
+            return false; // Invalid extension
+          }
+  
+          // Validate MIME type
+          const allowedMimeTypes = ["image/jpeg", "image/png"];
+          if (!allowedMimeTypes.includes(file.type)) {
+            return false; // Invalid MIME type
+          }
+  
+          return true; // File is valid
+        },
+        {
+          message: "Only JPEG, JPG, and PNG files are allowed.", // Custom error message
+        }
+      ),
   });

@@ -11,6 +11,7 @@ import { put } from "@vercel/blob";
 import { BrotherSchema, RecruitSchema, EditBrotherSchema } from "./zod-schemas";
 import bcrypt from "bcrypt";
 import { validateImageFile } from "@/app/utils/validateImage";
+import { sanitizeFilename } from "@/app/utils/sanitizeFilename";
 
 // ============= AUTH / SIGNIN / SIGNOUT =================
 export async function authenticate(
@@ -224,7 +225,8 @@ export async function createBrotherAccount(
   // 5) Upload image to Vercel Blob
   try {
     const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
-    const fileName = `brother-profile-${randomUUID()}-${imageFile.name}`;
+    const sanitizedFilename = sanitizeFilename(imageFile.name);
+    const fileName = `brother-profile-${randomUUID()}-${sanitizedFilename}`;
     const { url } = await put(fileName, fileBuffer, {
       access: "public",
       contentType: imageFile.type,
@@ -317,7 +319,8 @@ export async function createRecruitAccount(
   try {
     // Upload image directly without conversion
     const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
-    const fileName = `recruit-profile-${randomUUID()}-${imageFile.name}`;
+    const sanitizedFilename = sanitizeFilename(imageFile.name);
+    const fileName = `brother-profile-${randomUUID()}-${sanitizedFilename}`;
     const { url } = await put(fileName, fileBuffer, {
       access: "public",
       contentType: imageFile.type,
@@ -356,12 +359,11 @@ export async function createRecruitAccount(
   redirect("/");
 }
 
-// ============= EDIT BROTHER ACCOUNT =============
 export async function updateBrotherProfile(
   prevState: State,
   formData: FormData
 ) {
-  // 1) Extract from form
+  // ✅ Extract form data, ensuring `null` is handled for image
   const rawFields = {
     brotherId: formData.get("brotherId")?.toString() || "",
     first_name: formData.get("first_name")?.toString() || "",
@@ -378,12 +380,25 @@ export async function updateBrotherProfile(
     position: formData.get("position")?.toString() || "",
     bio: formData.get("bio")?.toString() || "",
     instagram: formData.get("instagram")?.toString() || "",
-    image: formData.get("image") as File | null,
+    image: (() => {
+      const file = formData.get("image");
+      // Check if the file is invalid (name: "undefined", type: "application/octet-stream", size: 0)
+      if (
+        file instanceof File &&
+        file.name === "undefined" &&
+        file.type === "application/octet-stream" &&
+        file.size === 0
+      ) {
+        return null; // Treat as no file uploaded
+      }
+      return file; // Otherwise, return the file
+    })(),
   };
 
-  // 2) Validate with your EditBrotherSchema, which must allow optional `image`
+  // ✅ Validate with Zod
   const parsed = EditBrotherSchema.safeParse(rawFields);
   if (!parsed.success) {
+    console.error("Validation Errors:", parsed.error.flatten().fieldErrors); // ✅ Debugging validation issues
     return {
       errors: parsed.error.flatten().fieldErrors,
       message: "Validation failed.",
@@ -392,17 +407,13 @@ export async function updateBrotherProfile(
 
   let newImageUrl: string | undefined;
   const imageFile = parsed.data.image;
-  if (imageFile && imageFile.size > 0) {
-    // 3) Validate image file
-    const validationError = validateImageFile(imageFile);
-    if (validationError) {
-      return { message: validationError };
-    }
 
+  if (imageFile) {
+    // ✅ Upload new image
     try {
-      // Upload image directly without conversion
       const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
-      const fileName = `brother-profile-${randomUUID()}-${imageFile.name}`;
+      const sanitizedFilename = sanitizeFilename(imageFile.name);
+      const fileName = `brother-profile-${randomUUID()}-${sanitizedFilename}`;
       const { url } = await put(fileName, fileBuffer, {
         access: "public",
         contentType: imageFile.type,
@@ -412,58 +423,42 @@ export async function updateBrotherProfile(
       console.error("Image Upload Error:", error);
       return { message: "Failed to upload new photo." };
     }
+  } else {
+    // ✅ If no new image is uploaded, keep the existing one
+    const existingBrother = await sql`SELECT image_url FROM brothers WHERE id = ${parsed.data.brotherId}`;
+    if (existingBrother.rows.length > 0) {
+      newImageUrl = existingBrother.rows[0].image_url; // Preserve current image
+    }
   }
 
-  // 3) Update DB
+  // ✅ Update the database
   try {
-    if (newImageUrl) {
-      await sql`
-        UPDATE brothers
-        SET
-          first_name = ${parsed.data.first_name},
-          last_name = ${parsed.data.last_name},
-          personal_email = ${parsed.data.personal_email},
-          school_email = ${parsed.data.school_email},
-          year = ${parsed.data.year},
-          phone = ${parsed.data.phone},
-          house = ${parsed.data.house},
-          brother_name = ${parsed.data.brother_name},
-          birthday = ${parsed.data.birthday},
-          location = ${parsed.data.location},
-          tagline = ${parsed.data.tagline},
-          position = ${parsed.data.position},
-          bio = ${parsed.data.bio},
-          instagram = ${parsed.data.instagram || null},
-          image_url = ${newImageUrl}
-        WHERE id = ${parsed.data.brotherId}
-      `;
-    } else {
-      await sql`
-        UPDATE brothers
-        SET
-          first_name = ${parsed.data.first_name},
-          last_name = ${parsed.data.last_name},
-          personal_email = ${parsed.data.personal_email},
-          school_email = ${parsed.data.school_email},
-          year = ${parsed.data.year},
-          phone = ${parsed.data.phone},
-          house = ${parsed.data.house},
-          brother_name = ${parsed.data.brother_name},
-          birthday = ${parsed.data.birthday},
-          location = ${parsed.data.location},
-          tagline = ${parsed.data.tagline},
-          position = ${parsed.data.position},
-          bio = ${parsed.data.bio},
-          instagram = ${parsed.data.instagram || null}
-        WHERE id = ${parsed.data.brotherId}
-      `;
-    }
+    await sql`
+      UPDATE brothers
+      SET
+        first_name = ${parsed.data.first_name},
+        last_name = ${parsed.data.last_name},
+        personal_email = ${parsed.data.personal_email},
+        school_email = ${parsed.data.school_email},
+        year = ${parsed.data.year},
+        phone = ${parsed.data.phone},
+        house = ${parsed.data.house},
+        brother_name = ${parsed.data.brother_name},
+        birthday = ${parsed.data.birthday},
+        location = ${parsed.data.location},
+        tagline = ${parsed.data.tagline},
+        position = ${parsed.data.position},
+        bio = ${parsed.data.bio},
+        instagram = ${parsed.data.instagram || null},
+        image_url = ${newImageUrl} -- ✅ Keeps old image if no new one is uploaded
+      WHERE id = ${parsed.data.brotherId}
+    `;
   } catch (error) {
     console.error("DB Error:", error);
     return { message: "Database Error: Failed to update profile." };
   }
 
-  // 4) Revalidate and redirect
+  // ✅ Revalidate and Redirect
   revalidatePath("/brothers");
   redirect("/brothers");
 }

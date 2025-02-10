@@ -10,6 +10,7 @@ export const BrotherCard: React.FC<BrotherCardProps> = ({
   image_url,
   id
 }) => {
+  
   return (
     <Link
       href={`/brothers/${id}/details`} // Link to the brother's details page
