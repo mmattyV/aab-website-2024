@@ -206,15 +206,21 @@ export async function createBrotherAccount(
     return { message: "Invalid invitation code." };
   }
 
-  // 3) Hash password
-  const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
-
-  // 4) Upload image to Vercel Blob
+  // 3) Validate image file extension
   const imageFile = parsed.data.image;
-  if (!imageFile) {
+  if (imageFile) {
+    const extension = imageFile.name.split('.').pop()?.toLowerCase();
+    if (extension === 'heic' || extension === 'heif') {
+      return { message: "HEIC and HEIF files are not allowed." };
+    }
+  } else {
     return { message: "No image file was provided." };
   }
 
+  // 4) Hash password
+  const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
+
+  // 5) Upload image to Vercel Blob
   try {
     const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
     const fileName = `brother-profile-${randomUUID()}-${imageFile.name}`;
@@ -223,7 +229,7 @@ export async function createBrotherAccount(
       contentType: imageFile.type,
     });
 
-    // 5) Insert into DB
+    // 6) Insert into DB
     const brotherId = randomUUID();
     await sql`
       INSERT INTO brothers (
@@ -270,7 +276,7 @@ export async function createBrotherAccount(
     return { message: "Failed to create brother account." };
   }
 
-  // 6) Revalidate & redirect
+  // 7) Revalidate & redirect
   revalidatePath("/brothers");
   redirect("/brothers");
 }
@@ -300,6 +306,12 @@ export async function createRecruitAccount(
   const imageFile = parsed.data.image;
   if (!imageFile) {
     return { message: "No image file provided." };
+  }
+
+  // Validate image file extension
+  const extension = imageFile.name.split('.').pop()?.toLowerCase();
+  if (extension === 'heic' || extension === 'heif') {
+    return { message: "HEIC and HEIF files are not allowed." };
   }
 
   try {
@@ -381,6 +393,12 @@ export async function updateBrotherProfile(
   let newImageUrl: string | undefined;
   const imageFile = parsed.data.image;
   if (imageFile && imageFile.size > 0) {
+    // Validate image file extension
+    const extension = imageFile.name.split('.').pop()?.toLowerCase();
+    if (extension === 'heic' || extension === 'heif') {
+      return { message: "HEIC and HEIF files are not allowed." };
+    }
+
     try {
       // Upload image directly without conversion
       const fileBuffer = Buffer.from(await imageFile.arrayBuffer());

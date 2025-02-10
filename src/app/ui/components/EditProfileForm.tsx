@@ -3,26 +3,39 @@
 import { useActionState } from "react";
 import { updateBrotherProfile, State } from "@/app/lib/actions"; 
 import { BrotherProfileProps } from "@/app/lib/definitions";
-// ^ We'll define updateBrotherProfile in actions.ts
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 
 export default function EditProfileForm({ brother, id }: { brother: BrotherProfileProps, id: string}) {
   const initialState: State = { message: null, errors: {} };
-
-  // Hook into the updateBrotherProfile server action
   const [state, formAction] = useActionState(updateBrotherProfile, initialState);
 
-   // Some constants for dropdown lists
-   const validYears = ["2028", "2027", "2026", "2025"];
-   const positions = [
-     "New Brother",
-     "Archives",
-     "Brotherhood Chair",
-     "Recruitment Chair",
-     "Activism Chair",
-     "Service Chair",
-     "Finance Chair",
-     "Alumni Chair"
-   ];
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageError(null);
+    const file = e.target.files?.[0];
+    if (file) {
+      const extension = file.name.split('.').pop()?.toLowerCase();
+      if (extension === 'heic' || extension === 'heif') {
+        setImageError("HEIC and HEIF files are not allowed.");
+        e.target.value = "";
+      }
+    }
+  };
+
+  // Constants for dropdown lists
+  const validYears = ["2028", "2027", "2026", "2025"];
+  const positions = [
+    "New Brother",
+    "Archives",
+    "Brotherhood Chair",
+    "Recruitment Chair",
+    "Activism Chair",
+    "Service Chair",
+    "Finance Chair",
+    "Alumni Chair"
+  ];
 
   return (
     <form
@@ -31,7 +44,7 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
     >
       <h2 className="text-4xl font-bold mb-4">Edit Brother Profile</h2>
 
-      {/* Hidden ID field, so server action knows who to update */}
+      {/* Hidden ID field */}
       <input type="hidden" name="brotherId" value={id} />
 
       {/* First Name */}
@@ -61,10 +74,7 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
       />
 
       {/* Personal Email */}
-      <label
-        htmlFor="personal_email"
-        className="mb-2 font-semibold text-lg"
-      >
+      <label htmlFor="personal_email" className="mb-2 font-semibold text-lg">
         Personal Email
       </label>
       <input
@@ -77,10 +87,7 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
       />
 
       {/* School Email */}
-      <label
-        htmlFor="school_email"
-        className="mb-2 font-semibold text-lg"
-      >
+      <label htmlFor="school_email" className="mb-2 font-semibold text-lg">
         School Email
       </label>
       <input
@@ -137,10 +144,7 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
       />
 
       {/* Brother Name */}
-      <label
-        htmlFor="brother_name"
-        className="mb-2 font-semibold text-lg"
-      >
+      <label htmlFor="brother_name" className="mb-2 font-semibold text-lg">
         Brother Name
       </label>
       <input
@@ -153,10 +157,7 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
       />
 
       {/* Birthday */}
-      <label
-        htmlFor="birthday"
-        className="mb-2 font-semibold text-lg"
-      >
+      <label htmlFor="birthday" className="mb-2 font-semibold text-lg">
         Birthday
       </label>
       <input
@@ -169,10 +170,7 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
       />
 
       {/* Location */}
-      <label
-        htmlFor="location"
-        className="mb-2 font-semibold text-lg"
-      >
+      <label htmlFor="location" className="mb-2 font-semibold text-lg">
         Location
       </label>
       <input
@@ -241,15 +239,19 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
 
       {/* Replace or Upload New Profile Picture */}
       <label htmlFor="image" className="mb-2 font-semibold text-lg">
-        Replace Profile Picture
+        Replace Profile Picture (no .heic or .heif files)
       </label>
       <input
         id="image"
         type="file"
         name="image"
         accept="image/*"
-        className="rounded-md border border-gray-300 p-2 mb-6 focus:outline-none focus:ring-2 focus:ring-brandRed"
+        className="rounded-md border border-gray-300 p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-brandRed"
+        onChange={handleImageChange}
       />
+      {imageError && (
+        <p className="text-sm text-red-500 mb-4">{imageError}</p>
+      )}
 
       {/* Submit Button */}
       <button
@@ -267,19 +269,7 @@ export default function EditProfileForm({ brother, id }: { brother: BrotherProfi
       >
         {state.message && (
           <>
-            <svg
-              className="h-5 w-5 text-red-500"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.94-1.14 2.994-2.674L22 12c0-6.076-4.925-11-11-11S0 5.924 0 12c0 1.53.328 2.98.938 4.326.614 1.363 2.006 2.674 3.552 2.674z"
-              />
-            </svg>
+            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
             <p className="text-sm text-red-500">{state.message}</p>
           </>
         )}

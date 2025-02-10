@@ -6,16 +6,28 @@ import {
   State,
 } from "@/app/lib/actions";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 
 export default function RecruitSignUpPage() {
-  // Initialize state for the server action responses
   const initialState: State = { message: null, errors: {} };
-
-  // Hook for the Recruit sign-up action
   const [recruitState, recruitFormAction] = useActionState(
     createRecruitAccount,
     initialState
   );
+
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageError(null);
+    const file = e.target.files?.[0];
+    if (file) {
+      const extension = file.name.split('.').pop()?.toLowerCase();
+      if (extension === 'heic' || extension === 'heif') {
+        setImageError("HEIC and HEIF files are not allowed.");
+        e.target.value = "";
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
@@ -122,16 +134,20 @@ export default function RecruitSignUpPage() {
 
             {/* Image Upload */}
             <label htmlFor="image" className="mb-2 font-semibold text-lg">
-              Upload Profile Picture
+              Upload Profile Picture (no .heic or .heif files)
             </label>
             <input
               id="image"
               type="file"
               name="image"
               accept="image/*"
-              className="rounded-md border border-gray-300 p-2 mb-6 focus:outline-none focus:ring-2 focus:ring-brandRed"
+              className="rounded-md border border-gray-300 p-2 mb-2 focus:outline-none focus:ring-2 focus:ring-brandRed"
               required
+              onChange={handleImageChange}
             />
+            {imageError && (
+              <p className="text-sm text-red-500 mb-4">{imageError}</p>
+            )}
 
             {/* Submit Button */}
             <button
