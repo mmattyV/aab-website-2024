@@ -12,7 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${questrial.className} antialiased`}>
+      <body className={`${questrial.className} antialiased bg-black text-white`}>
         {/* Header */}
         <Header />
 
@@ -24,7 +24,7 @@ export default function RootLayout({
         </main>
 
         {/* Footer */}
-        <footer className="flex flex-col items-center justify-center w-full mt-5 mb-10">
+        <footer className="flex flex-col items-center justify-center w-full bg-black mt-5 mb-10">
           <Footer
             year={new Date().getFullYear()}
             logo="/aablogowhite.png"

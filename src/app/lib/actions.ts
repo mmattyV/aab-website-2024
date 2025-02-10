@@ -10,7 +10,6 @@ import { randomUUID } from "crypto";
 import { put } from "@vercel/blob";
 import { BrotherSchema, RecruitSchema, EditBrotherSchema } from "./zod-schemas";
 import bcrypt from "bcrypt";
-import { maybeConvertHeicToJpg } from "./convertHeic"; //
 
 // ============= AUTH / SIGNIN / SIGNOUT =================
 export async function authenticate(
@@ -50,6 +49,7 @@ export type State = {
   message?: string | null;
 };
 
+// ============= CREATE COMMENT =============
 export async function createComment(prevState: State, formData: FormData) {
   const rawFields = {
     recruitId: formData.get("recruitId")?.toString() || "",
@@ -92,6 +92,7 @@ export async function createComment(prevState: State, formData: FormData) {
   redirect(`/recruits/${recruitId}/details`);
 }
 
+// ============= GET COMMENT BY RECRUIT AND BROTHER =============
 export async function getCommentByRecruitAndBrother(
   recruitId: string,
   brotherId: string
@@ -110,6 +111,7 @@ export async function getCommentByRecruitAndBrother(
   }
 }
 
+// ============= UPSERT COMMENT =============
 export async function upsertComment(prevState: State, formData: FormData) {
   const rawFields = {
     recruitId: formData.get("recruitId")?.toString() || "",
@@ -163,14 +165,28 @@ export async function upsertComment(prevState: State, formData: FormData) {
   redirect(`/recruits/${recruitId}/details`);
 }
 
-// -------------- CREATE BROTHER ACCOUNT -----------------
-export async function createBrotherAccount(prevState: State, formData: FormData) {
+// ============= CREATE BROTHER ACCOUNT =============
+export async function createBrotherAccount(
+  prevState: State,
+  formData: FormData
+) {
   // 1) Extract fields
   const rawFields = {
     personal_email: formData.get("personal_email")?.toString() || "",
     school_email: formData.get("school_email")?.toString() || "",
     password: formData.get("password")?.toString() || "",
-    // ... other fields ...
+    first_name: formData.get("first_name")?.toString() || "",
+    last_name: formData.get("last_name")?.toString() || "",
+    year: formData.get("year")?.toString() || "",
+    phone: formData.get("phone")?.toString() || "",
+    house: formData.get("house")?.toString() || "",
+    brother_name: formData.get("brother_name")?.toString() || "",
+    birthday: formData.get("birthday")?.toString() || "",
+    location: formData.get("location")?.toString() || "",
+    tagline: formData.get("tagline")?.toString() || "",
+    position: formData.get("position")?.toString() || "",
+    bio: formData.get("bio")?.toString() || "",
+    instagram: formData.get("instagram")?.toString() || "",
     image: formData.get("image") as File | null,
     invite_code: formData.get("invite_code")?.toString() || "",
   };
@@ -193,41 +209,59 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
   // 3) Hash password
   const hashedPassword = await bcrypt.hash(parsed.data.password, 10);
 
-  // 4) Convert .heic → .jpg if needed, then upload
+  // 4) Upload image to Vercel Blob
   const imageFile = parsed.data.image;
   if (!imageFile) {
     return { message: "No image file was provided." };
   }
 
   try {
-    const { buffer, contentType, fileName } = await maybeConvertHeicToJpg(imageFile);
-    const finalFileName = `brother-profile-${randomUUID()}-${fileName}`;
-    const { url } = await put(finalFileName, buffer, {
+    const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
+    const fileName = `brother-profile-${randomUUID()}-${imageFile.name}`;
+    const { url } = await put(fileName, fileBuffer, {
       access: "public",
-      contentType,
+      contentType: imageFile.type,
     });
 
     // 5) Insert into DB
     const brotherId = randomUUID();
     await sql`
       INSERT INTO brothers (
-        id,
-        personal_email,
+        id, 
+        personal_email, 
         school_email,
         password,
         first_name,
         last_name,
-        /* ...fields... */,
+        year,
+        phone,
+        house,
+        brother_name,
+        birthday,
+        location,
+        tagline,
+        position,
+        bio,
+        instagram,
         image_url
-      )
+      ) 
       VALUES (
-        ${brotherId},
-        ${parsed.data.personal_email},
-        ${parsed.data.school_email},
-        ${hashedPassword},
+        ${brotherId}, 
+        ${parsed.data.personal_email}, 
+        ${parsed.data.school_email}, 
+        ${hashedPassword}, 
         ${parsed.data.first_name},
         ${parsed.data.last_name},
-        /* ...fields... */,
+        ${parsed.data.year},
+        ${parsed.data.phone},
+        ${parsed.data.house},
+        ${parsed.data.brother_name},
+        ${parsed.data.birthday},
+        ${parsed.data.location},
+        ${parsed.data.tagline},
+        ${parsed.data.position},
+        ${parsed.data.bio},
+        ${parsed.data.instagram},
         ${url}
       )
     `;
@@ -236,15 +270,23 @@ export async function createBrotherAccount(prevState: State, formData: FormData)
     return { message: "Failed to create brother account." };
   }
 
+  // 6) Revalidate & redirect
   revalidatePath("/brothers");
   redirect("/brothers");
 }
 
-// -------------- CREATE RECRUIT ACCOUNT -----------------
-export async function createRecruitAccount(prevState: State, formData: FormData) {
+// ============= CREATE RECRUIT ACCOUNT =============
+export async function createRecruitAccount(
+  prevState: State,
+  formData: FormData
+) {
   const rawFields = {
     email: formData.get("email")?.toString() || "",
-    // ...
+    first_name: formData.get("first_name")?.toString() || "",
+    last_name: formData.get("last_name")?.toString() || "",
+    year: formData.get("year")?.toString() || "",
+    phone: formData.get("phone")?.toString() || "",
+    room: formData.get("room")?.toString() || "",
     image: formData.get("image") as File | null,
   };
   const parsed = RecruitSchema.safeParse(rawFields);
@@ -261,19 +303,19 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
   }
 
   try {
-    // Convert if .heic
-    const { buffer, contentType, fileName } = await maybeConvertHeicToJpg(imageFile);
-    const finalName = `recruit-profile-${randomUUID()}-${fileName}`;
-    const { url } = await put(finalName, buffer, {
+    // Upload image directly without conversion
+    const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
+    const fileName = `recruit-profile-${randomUUID()}-${imageFile.name}`;
+    const { url } = await put(fileName, fileBuffer, {
       access: "public",
-      contentType,
+      contentType: imageFile.type,
     });
 
     // Insert recruit
     const recruitId = randomUUID();
     await sql`
       INSERT INTO recruits (
-        id,
+        id, 
         email,
         first_name,
         last_name,
@@ -281,9 +323,9 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
         phone,
         room,
         image_url
-      )
+      ) 
       VALUES (
-        ${recruitId},
+        ${recruitId}, 
         ${parsed.data.email},
         ${parsed.data.first_name},
         ${parsed.data.last_name},
@@ -302,17 +344,32 @@ export async function createRecruitAccount(prevState: State, formData: FormData)
   redirect("/");
 }
 
-// -------------- UPDATE BROTHER PROFILE -----------------
-export async function updateBrotherProfile(prevState: State, formData: FormData) {
+// ============= EDIT BROTHER ACCOUNT =============
+export async function updateBrotherProfile(
+  prevState: State,
+  formData: FormData
+) {
   // 1) Extract from form
   const rawFields = {
     brotherId: formData.get("brotherId")?.toString() || "",
-    // ...
+    first_name: formData.get("first_name")?.toString() || "",
+    last_name: formData.get("last_name")?.toString() || "",
+    personal_email: formData.get("personal_email")?.toString() || "",
+    school_email: formData.get("school_email")?.toString() || "",
+    year: formData.get("year")?.toString() || "",
+    phone: formData.get("phone")?.toString() || "",
+    house: formData.get("house")?.toString() || "",
+    brother_name: formData.get("brother_name")?.toString() || "",
+    birthday: formData.get("birthday")?.toString() || "",
+    location: formData.get("location")?.toString() || "",
+    tagline: formData.get("tagline")?.toString() || "",
+    position: formData.get("position")?.toString() || "",
+    bio: formData.get("bio")?.toString() || "",
+    instagram: formData.get("instagram")?.toString() || "",
     image: formData.get("image") as File | null,
   };
 
   // 2) Validate with your EditBrotherSchema, which must allow optional `image`
-  // e.g. z.any().optional()
   const parsed = EditBrotherSchema.safeParse(rawFields);
   if (!parsed.success) {
     return {
@@ -325,12 +382,12 @@ export async function updateBrotherProfile(prevState: State, formData: FormData)
   const imageFile = parsed.data.image;
   if (imageFile && imageFile.size > 0) {
     try {
-      // Convert if .heic
-      const { buffer, contentType, fileName } = await maybeConvertHeicToJpg(imageFile);
-      const finalName = `brother-profile-${randomUUID()}-${fileName}`;
-      const { url } = await put(finalName, buffer, {
+      // Upload image directly without conversion
+      const fileBuffer = Buffer.from(await imageFile.arrayBuffer());
+      const fileName = `brother-profile-${randomUUID()}-${imageFile.name}`;
+      const { url } = await put(fileName, fileBuffer, {
         access: "public",
-        contentType,
+        contentType: imageFile.type,
       });
       newImageUrl = url;
     } catch (error) {
@@ -347,7 +404,18 @@ export async function updateBrotherProfile(prevState: State, formData: FormData)
         SET
           first_name = ${parsed.data.first_name},
           last_name = ${parsed.data.last_name},
-          /* ...fields... */,
+          personal_email = ${parsed.data.personal_email},
+          school_email = ${parsed.data.school_email},
+          year = ${parsed.data.year},
+          phone = ${parsed.data.phone},
+          house = ${parsed.data.house},
+          brother_name = ${parsed.data.brother_name},
+          birthday = ${parsed.data.birthday},
+          location = ${parsed.data.location},
+          tagline = ${parsed.data.tagline},
+          position = ${parsed.data.position},
+          bio = ${parsed.data.bio},
+          instagram = ${parsed.data.instagram || null},
           image_url = ${newImageUrl}
         WHERE id = ${parsed.data.brotherId}
       `;
@@ -357,7 +425,18 @@ export async function updateBrotherProfile(prevState: State, formData: FormData)
         SET
           first_name = ${parsed.data.first_name},
           last_name = ${parsed.data.last_name},
-          /* ...fields... */
+          personal_email = ${parsed.data.personal_email},
+          school_email = ${parsed.data.school_email},
+          year = ${parsed.data.year},
+          phone = ${parsed.data.phone},
+          house = ${parsed.data.house},
+          brother_name = ${parsed.data.brother_name},
+          birthday = ${parsed.data.birthday},
+          location = ${parsed.data.location},
+          tagline = ${parsed.data.tagline},
+          position = ${parsed.data.position},
+          bio = ${parsed.data.bio},
+          instagram = ${parsed.data.instagram || null}
         WHERE id = ${parsed.data.brotherId}
       `;
     }
@@ -366,6 +445,7 @@ export async function updateBrotherProfile(prevState: State, formData: FormData)
     return { message: "Database Error: Failed to update profile." };
   }
 
+  // 4) Revalidate and redirect
   revalidatePath("/brothers");
   redirect("/brothers");
 }

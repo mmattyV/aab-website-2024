@@ -3,7 +3,7 @@
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Underline } from "@/app/ui/components/Underline";
 
-const validTabs = ["ALL", "BAPTIZED", "UNBAPTIZED"];
+const validTabs = ["ALL", "GRABBED MEAL", "NOT GRABBED MEAL"];
 
 export default function RecruitFilterTabs() {
   const searchParams = useSearchParams();

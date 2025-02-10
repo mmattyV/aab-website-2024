@@ -31,12 +31,12 @@ export default async function RecruitSectionWrapper({
   // 5. Filter based on activeTab
   let filteredRecruits = allRecruits;
 
-  if (activeTab === "BAPTIZED") {
+  if (activeTab === "GRABBED MEAL") {
     // Only recruits that have a comment from this brother
     filteredRecruits = allRecruits.filter((recruit) =>
       recruitIdsBrotherHasCommentedOn.has(recruit.id)
     );
-  } else if (activeTab === "UNBAPTIZED") {
+  } else if (activeTab === "NOT GRABBED MEAL") {
     // Only recruits that do *not* have a comment from this brother
     filteredRecruits = allRecruits.filter(
       (recruit) => !recruitIdsBrotherHasCommentedOn.has(recruit.id)

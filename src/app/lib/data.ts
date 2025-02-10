@@ -143,3 +143,18 @@ export async function fetchBrotherByEmail(email: string) {
     return null;
   }
 }
+
+export async function fetchUserCommentForRecruit(recruitId: string, userId: string) {
+  try {
+    const result = await sql`
+      SELECT id, comment, red_flag 
+      FROM recruit_comments 
+      WHERE recruit_id = ${recruitId} AND brother_id = ${userId}
+      LIMIT 1
+    `;
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error("Error fetching user comment:", error);
+    return null;
+  }
+}

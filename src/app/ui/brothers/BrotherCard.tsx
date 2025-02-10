@@ -49,7 +49,9 @@ export const BrotherCard: React.FC<BrotherCardProps> = ({
             duration-300 
             mix-blend-screen
           "
-        />
+        />Argument of type 'Blob | Blob[]' is not assignable to parameter of type 'Blob | MediaSource'.
+        Type 'Blob[]' is not assignable to type 'Blob | MediaSource'.
+          Type 'Blob[]' is missing the following properties from type 'Blob': size, type, arrayBuffer, bytes, and 2 more.
 
         {/* Text overlay at bottom-left */}
         <div
