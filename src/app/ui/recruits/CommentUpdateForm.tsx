@@ -43,10 +43,9 @@ export default function CommentUpdateForm({
       <label htmlFor="comment" className="mb-2 font-semibold text-lg">
         {commentId ? "Edit Comment" : "Add Comment"}
       </label>
-      <input
+      <textarea
         id="comment"
         name="comment"
-        type="text"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         placeholder="Enter your comment..."

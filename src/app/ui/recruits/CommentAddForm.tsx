@@ -24,10 +24,9 @@ export default function CommentAddForm({
       <label htmlFor="comment" className="mb-2 font-semibold text-lg">
         Comments
       </label>
-      <input
+      <textarea
         id="comment"
         name="comment"
-        type="text"
         placeholder="Enter your comments..."
         className="rounded-md border border-gray-300 p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-brandRed"
         required
