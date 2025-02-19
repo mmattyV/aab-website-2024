@@ -40,5 +40,5 @@ yarn-error.log*
 next-env.d.ts
 
 # dev routes
-/recover
-/delete
+/src/app/recover
+/src/app/delete
