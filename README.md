@@ -11,6 +11,6 @@ A redesign of the official AAB website.
 
 ## Acknowledgments
 Special thanks to our past maintainers:
-- Brandon Kim
-- Amia Ross
-- Abe Lee
+- Brandon Kim (2024.5)
+- Amia Ross (2020)
+- Abe Lee (2020)
