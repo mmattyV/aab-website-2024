@@ -15,7 +15,10 @@ export default function CommentAddForm({
   const [state, formAction] = useActionState(createComment, initialState);
 
   return (
-    <form action={formAction} className="flex flex-col w-full bg-white text-black rounded-md p-10 max-md:p-6 shadow-lg">
+    <form
+      action={formAction}
+      className="flex flex-col w-full bg-white text-black rounded-md p-10 max-md:p-6 shadow-lg"
+    >
       {/* Hidden Fields for IDs */}
       <input type="hidden" name="recruitId" value={recruitId} />
       <input type="hidden" name="brotherId" value={brotherId} />
@@ -34,7 +37,10 @@ export default function CommentAddForm({
       <div id="comment-error" aria-live="polite" aria-atomic="true">
         {state.errors?.comment &&
           state.errors.comment.map((error: string) => (
-            <p className="mt-2 text-sm text-red-500 flex items-center" key={error}>
+            <p
+              className="mt-2 text-sm text-red-500 flex items-center"
+              key={error}
+            >
               <ExclamationCircleIcon className="h-5 w-5 text-red-500 mr-1" />
               {error}
             </p>
@@ -56,7 +62,10 @@ export default function CommentAddForm({
       <div id="redFlag-error" aria-live="polite" aria-atomic="true">
         {state.errors?.redFlag &&
           state.errors.redFlag.map((error: string) => (
-            <p className="mt-2 text-sm text-red-500 flex items-center" key={error}>
+            <p
+              className="mt-2 text-sm text-red-500 flex items-center"
+              key={error}
+            >
               <ExclamationCircleIcon className="h-5 w-5 text-red-500 mr-1" />
               {error}
             </p>
@@ -73,7 +82,11 @@ export default function CommentAddForm({
       </button>
 
       {/* Submission Error Message */}
-      <div className="flex h-8 items-end space-x-1 mt-2" aria-live="polite" aria-atomic="true">
+      <div
+        className="flex h-8 items-end space-x-1 mt-2"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {state.message && (
           <p className="text-sm text-red-500 flex items-center">
             <ExclamationCircleIcon className="h-5 w-5 text-red-500 mr-1" />

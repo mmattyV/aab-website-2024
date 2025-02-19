@@ -26,11 +26,11 @@ export default async function Page(props: PageProps) {
           EDIT COMMENT
         </div>
       </div>
-      ){/* Login Form: larger & moved up */}
+      {/* Login Form: larger & moved up */}
       <div className="relative w-full flex flex-col items-center">
         {/* Negative margin to move the form up into header space */}
         <div className="mt-[-5rem] px-4 max-w-lg mx-auto w-full">
-          <CommentUpdateForm recruitId={id} brotherId={brotherId}/>
+          <CommentUpdateForm recruitId={id} brotherId={brotherId} />
         </div>
       </div>
     </div>

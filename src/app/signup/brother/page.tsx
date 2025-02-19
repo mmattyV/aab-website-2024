@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { createBrotherAccount, State } from "@/app/lib/actions";
 import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function BrotherSignUpPage() {
   const initialState: State = { message: null, errors: {} };
@@ -311,10 +312,12 @@ export default function BrotherSignUpPage() {
             )}
 
             {imagePreview && (
-              <img
+              <Image
                 src={imagePreview}
+                width={128} // Explicitly set width
+                height={128} // Explicitly set height
                 alt="Image Preview"
-                className="mt-2 mb-4 w-32 h-32 object-cover rounded-md"
+                className="mt-2 mb-4 object-cover rounded-md"
               />
             )}
 
