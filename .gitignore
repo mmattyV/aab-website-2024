@@ -42,3 +42,4 @@ next-env.d.ts
 # dev routes
 /src/app/recover
 /src/app/delete
+/src/app/merge
