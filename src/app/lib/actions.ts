@@ -69,6 +69,17 @@ export async function createComment(prevState: State, formData: FormData) {
   }
 
   const { recruitId, brotherId, comment, redFlag } = validatedFields.data;
+
+  const commentExists = await getCommentByRecruitAndBrother(
+    recruitId,
+    brotherId
+  );
+  if (commentExists) {
+    return {
+      message: "Comment already exists. Please update instead.",
+    };
+  }
+
   const commentId = randomUUID();
 
   const finalRedFlag = redFlag || "None";
@@ -145,6 +156,16 @@ export async function upsertComment(prevState: State, formData: FormData) {
         WHERE id = ${commentId}
       `;
     } else {
+      const commentExists = await getCommentByRecruitAndBrother(
+        recruitId,
+        brotherId
+      );
+      if (commentExists) {
+        return {
+          message: "Comment already exists. Please update instead.",
+        };
+      }
+
       await sql`
         INSERT INTO recruit_comments (id, recruit_id, brother_id, comment, red_flag)
         VALUES (
@@ -350,9 +371,18 @@ export async function createRecruitAccount(
         ${url}
       )
     `;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Recruit DB Error:", error);
-    return { message: "Failed to create recruit account." };
+
+    if (error instanceof Error && "code" in error && error.code === "23505") {
+      return {
+        message: "An account with this email already exists.",
+      };
+    }
+
+    return {
+      message: "Failed to create recruit account. Please try again later.",
+    };
   }
 
   revalidatePath("/");
@@ -425,7 +455,8 @@ export async function updateBrotherProfile(
     }
   } else {
     // ✅ If no new image is uploaded, keep the existing one
-    const existingBrother = await sql`SELECT image_url FROM brothers WHERE id = ${parsed.data.brotherId}`;
+    const existingBrother =
+      await sql`SELECT image_url FROM brothers WHERE id = ${parsed.data.brotherId}`;
     if (existingBrother.rows.length > 0) {
       newImageUrl = existingBrother.rows[0].image_url; // Preserve current image
     }
